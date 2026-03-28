@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="五子棋">
+<title>⚫ 五子棋</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{width:100%;height:100%;overflow:hidden}
+body{background:#1a1206;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:-apple-system,'PingFang TC',sans-serif}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .3s;z-index:10}
+.screen.hide{opacity:0;pointer-events:none}
+/* MENU */
+#menu{background:radial-gradient(ellipse at 50% 35%,#2a1a06 0%,#0d0a04 100%)}
+.m-ic{font-size:clamp(3.5rem,12vw,5.5rem);animation:fl 3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.m-tt{font-size:clamp(1.9rem,6.5vw,3rem);font-weight:900;color:#d4a030;text-shadow:0 0 20px rgba(212,160,48,.5);margin:6px 0 3px;text-align:center}
+.m-sb{color:#8d6e33;font-size:clamp(.82rem,2.4vw,.97rem);margin:0 0 24px}
+.diff-row{display:flex;gap:10px;margin-bottom:12px}
+.diff-btn{padding:8px 20px;border:2px solid #d4a030;border-radius:28px;font-size:clamp(.8rem,2.3vw,.92rem);font-weight:bold;font-family:inherit;cursor:pointer;background:transparent;color:#d4a030;transition:all .14s}
+.diff-btn.sel,.diff-btn:active{background:#d4a030;color:#1a0e02}
+.mbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:min(270px,78vw);padding:14px 20px;margin:7px;font-size:clamp(.97rem,3.3vw,1.2rem);font-weight:bold;font-family:inherit;border:none;border-radius:50px;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.5);transition:transform .12s}
+.mbtn:active{transform:scale(.93)}
+.mbtn-p{background:linear-gradient(135deg,#333,#111);color:white}
+.mbtn-ai{background:linear-gradient(135deg,#1565c0,#0d47a1);color:white}
+.mbtn-back{background:rgba(255,255,255,.1);color:#c8a060}
+/* GAME */
+#game{background:#1a1206;gap:4px}
+.prow{display:flex;align-items:center;justify-content:space-between;font-weight:bold;border-radius:20px;padding:5px 14px}
+:root{--bz:min(min(96vw,calc(100vh - 180px)),560px)}
+.prow{width:var(--bz);font-size:clamp(.72rem,2.1vw,.88rem)}
+.prow-b{background:rgba(20,20,20,.9);color:#e8e8e8;border:1.5px solid #333}
+.prow-w{background:rgba(80,60,20,.8);color:#f5dca0;border:1.5px solid #8b6914}
+.prow.active{box-shadow:0 0 0 2px #d4a030,0 0 12px rgba(212,160,48,.4)}
+#board-wrap{position:relative;width:var(--bz);height:var(--bz)}
+#board{position:absolute;top:0;left:0;touch-action:none}
+#status{width:var(--bz);padding:5px 16px;border-radius:18px;font-size:clamp(.76rem,2.3vw,.9rem);font-weight:bold;text-align:center;background:rgba(40,28,4,.85);color:#f5dca0;border:1px solid #6b4a10;flex-shrink:0}
+.gbtns{display:flex;gap:7px}
+.gb{padding:7px 12px;border:none;border-radius:16px;font-size:clamp(.7rem,2vw,.82rem);font-weight:bold;font-family:inherit;cursor:pointer;transition:transform .1s}
+.gb:active{transform:scale(.92)}
+.gb-undo{background:#c8a030;color:#1a0e02}.gb-new{background:#2e7d32;color:white}.gb-back{background:rgba(255,255,255,.12);color:#c8a060}
+#ai-ind{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(21,101,192,.9);color:white;padding:10px 24px;border-radius:24px;font-size:clamp(.9rem,3.3vw,1.1rem);font-weight:bold;display:none;z-index:150;box-shadow:0 6px 22px rgba(0,0,0,.5)}
+/* GAME OVER */
+#scr-over{background:rgba(0,0,0,.85);backdrop-filter:blur(8px)}
+.oe{font-size:clamp(3rem,11vw,5rem);animation:bo .5s ease infinite alternate}
+@keyframes bo{from{transform:translateY(0)}to{transform:translateY(-14px)}}
+.ot{font-size:clamp(1.5rem,5.5vw,2.2rem);font-weight:900;margin:10px 0 5px;text-align:center}
+.os{color:#c8c8c8;margin-bottom:20px;font-size:clamp(.85rem,2.8vw,1.05rem);text-align:center}
+</style>
+</head>
+<body>
+<!-- MENU -->
+<div class="screen" id="menu">
+  <div class="m-ic">⚫</div>
+  <div class="m-tt">五子棋</div>
+  <div class="m-sb">Gomoku · 先連5子者勝！</div>
+  <div style="color:#a0784a;font-size:clamp(.78rem,2.2vw,.88rem);margin-bottom:9px">⚡ 電腦難度</div>
+  <div class="diff-row">
+    <button class="diff-btn sel" id="d-easy" onclick="setD('easy')">🌟 簡單</button>
+    <button class="diff-btn" id="d-hard" onclick="setD('hard')">🔥 困難</button>
+  </div>
+  <button class="mbtn mbtn-p"  onclick="startG('2p')">👫 雙人對戰</button>
+  <button class="mbtn mbtn-ai" onclick="startG('ai')">🤖 對抗電腦</button>
+  <button class="mbtn mbtn-back" onclick="location.href='index.html'">⌂ 遊戲大廳</button>
+</div>
+
+<!-- GAME -->
+<div class="screen hide" id="game">
+  <div class="prow prow-b" id="pb">
+    <span id="lb">⚫ 黑方</span><span id="mb"></span>
+  </div>
+  <div id="board-wrap"><canvas id="board" style="cursor:pointer"></canvas></div>
+  <div id="status">⚫ 黑方先手</div>
+  <div class="prow prow-w" id="pw">
+    <span>⚪ 白方</span><span id="mw"></span>
+  </div>
+  <div class="gbtns">
+    <button class="gb gb-undo" onclick="undo()">↩ 悔棋</button>
+    <button class="gb gb-new"  onclick="newG()">↺ 新局</button>
+    <button class="gb gb-back" onclick="goMenu()">⌂ 選單</button>
+  </div>
+</div>
+<div id="ai-ind">🤖 電腦思考中…</div>
+
+<!-- GAME OVER -->
+<div class="screen hide" id="scr-over">
+  <div class="oe" id="oe">⚫</div>
+  <div class="ot" id="ot" style="color:#d4a030"></div>
+  <div class="os" id="os"></div>
+  <button class="mbtn mbtn-p"   onclick="newG();closeO()" style="margin:5px">↺ 再局</button>
+  <button class="mbtn mbtn-back" onclick="goMenu();closeO()" style="margin:5px">⌂ 選單</button>
+</div>
+
+<script>
+const SZ=15,canvas=document.getElementById('board'),ctx=canvas.getContext('2d');
+let BSIZE,FRAME,CS,G=null,aiDiff='easy',gameMode='2p';
+
+function resize(){
+  const wrap=document.getElementById('board-wrap');
+  const sz=wrap.offsetWidth;
+  canvas.width=canvas.height=sz;canvas.style.width=canvas.style.height=sz+'px';
+  BSIZE=sz;FRAME=Math.round(sz*.055);CS=(BSIZE-FRAME*2)/(SZ-1);
+}
+window.addEventListener('resize',()=>{resize();if(G)render();});
+
+function setD(d){aiDiff=d;document.getElementById('d-easy').classList.toggle('sel',d==='easy');document.getElementById('d-hard').classList.toggle('sel',d==='hard');}
+function show(id){['menu','game','scr-over'].forEach(s=>document.getElementById(s).classList.toggle('hide',s!==id));}
+function goMenu(){show('menu');}
+function closeO(){document.getElementById('scr-over').classList.add('hide');}
+
+function startG(mode){
+  gameMode=mode;show('game');resize();initG();render();
+}
+function initG(){
+  G={
+    board:Array(SZ).fill(null).map(()=>Array(SZ).fill(null)),
+    turn:'b',// b=black, w=white
+    over:false,winner:null,winLine:null,
+    hist:[],moveCnt:0,
+  };
+  document.getElementById('lb').textContent=gameMode==='ai'?'⚫ 玩家':'⚫ 黑方';
+}
+function newG(){closeO();initG();render();}
+
+// ── CANVAS RENDER ──
+function render(){
+  if(!CS)return;
+  ctx.clearRect(0,0,BSIZE,BSIZE);
+  drawBoard();
+  drawStones();
+  drawWinLine();
+  updateStatusUI();
+}
+
+function drawBoard(){
+  // Wood background
+  const wg=ctx.createLinearGradient(0,0,BSIZE,BSIZE);
+  wg.addColorStop(0,'#dcb483');wg.addColorStop(.4,'#c8a060');wg.addColorStop(1,'#b8905a');
+  ctx.fillStyle=wg;ctx.fillRect(0,0,BSIZE,BSIZE);
+
+  // Frame border (darker wood)
+  ctx.fillStyle='rgba(0,0,0,.18)';
+  ctx.fillRect(0,0,BSIZE,FRAME*.8);ctx.fillRect(0,BSIZE-FRAME*.8,BSIZE,FRAME*.8);
+  ctx.fillRect(0,0,FRAME*.8,BSIZE);ctx.fillRect(BSIZE-FRAME*.8,0,FRAME*.8,BSIZE);
+
+  // Wood grain
+  ctx.strokeStyle='rgba(0,0,0,0.04)';ctx.lineWidth=1;
+  for(let i=0;i<BSIZE;i+=8){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+BSIZE*.1,BSIZE);ctx.stroke();}
+
+  // Grid lines
+  ctx.strokeStyle='rgba(0,0,0,.65)';ctx.lineWidth=1;
+  for(let i=0;i<SZ;i++){
+    const x=FRAME+i*CS,y=FRAME+i*CS;
+    ctx.beginPath();ctx.moveTo(x,FRAME);ctx.lineTo(x,BSIZE-FRAME);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(FRAME,y);ctx.lineTo(BSIZE-FRAME,y);ctx.stroke();
+  }
+
+  // Outer border (thick)
+  ctx.strokeStyle='rgba(0,0,0,.75)';ctx.lineWidth=2;
+  ctx.strokeRect(FRAME,FRAME,(SZ-1)*CS,(SZ-1)*CS);
+
+  // Star points
+  const sp=[3,7,11];
+  ctx.fillStyle='rgba(0,0,0,.7)';
+  sp.forEach(r=>sp.forEach(c=>{
+    ctx.beginPath();ctx.arc(FRAME+c*CS,FRAME+r*CS,CS*.09,0,Math.PI*2);ctx.fill();
+  }));
+  // Center star
+  ctx.beginPath();ctx.arc(FRAME+7*CS,FRAME+7*CS,CS*.1,0,Math.PI*2);ctx.fill();
+
+  // Coordinates (numbers at left, letters at bottom — subtle)
+  ctx.fillStyle='rgba(0,0,0,.35)';ctx.textBaseline='middle';ctx.textAlign='right';
+  ctx.font=`${Math.max(7,CS*.35)}px sans-serif`;
+  for(let i=0;i<SZ;i++){ctx.fillText(SZ-i,FRAME-5,FRAME+i*CS);}
+  ctx.textAlign='center';ctx.textBaseline='top';
+  const letters='ABCDEFGHJKLMNOP';
+  for(let i=0;i<SZ;i++){ctx.fillText(letters[i],FRAME+i*CS,BSIZE-FRAME+4);}
+}
+
+function drawStone(r,c,color,alpha){
+  const x=FRAME+c*CS,y=FRAME+r*CS,rad=CS*.44;
+  ctx.save();ctx.globalAlpha=alpha||1;
+  // Shadow
+  ctx.shadowColor='rgba(0,0,0,.4)';ctx.shadowBlur=CS*.2;ctx.shadowOffsetX=CS*.04;ctx.shadowOffsetY=CS*.06;
+  // Gradient for 3D look
+  const grad=ctx.createRadialGradient(x-rad*.3,y-rad*.3,rad*.05,x,y,rad);
+  if(color==='b'){grad.addColorStop(0,'#5a5a5a');grad.addColorStop(.5,'#1a1a1a');grad.addColorStop(1,'#080808');}
+  else{grad.addColorStop(0,'#ffffff');grad.addColorStop(.5,'#f0f0f0');grad.addColorStop(1,'#c8c8c8');}
+  ctx.fillStyle=grad;ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;
+  // Highlight
+  ctx.globalAlpha=(alpha||1)*(color==='b'?.45:.6);
+  ctx.fillStyle='white';ctx.beginPath();ctx.arc(x-rad*.28,y-rad*.28,rad*.28,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=alpha||1;
+  // Last move marker
+  if(G.hist.length>0){const lm=G.hist[G.hist.length-1];if(lm.r===r&&lm.c===c){ctx.strokeStyle=color==='b'?'#ffd600':'#f44336';ctx.lineWidth=CS*.08;ctx.beginPath();ctx.arc(x,y,rad*.45,0,Math.PI*2);ctx.stroke();}}
+  ctx.restore();
+}
+
+function drawStones(){
+  for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){if(G.board[r][c])drawStone(r,c,G.board[r][c]);}
+  // Hover preview (if applicable)
+}
+
+function drawWinLine(){
+  if(!G.winLine)return;
+  const wl=G.winLine;
+  ctx.save();
+  ctx.strokeStyle='rgba(255,50,50,.85)';ctx.lineWidth=CS*.14;ctx.lineCap='round';
+  ctx.shadowColor='#ff1744';ctx.shadowBlur=8;
+  ctx.beginPath();
+  ctx.moveTo(FRAME+wl[0].c*CS,FRAME+wl[0].r*CS);
+  wl.forEach(p=>ctx.lineTo(FRAME+p.c*CS,FRAME+p.r*CS));
+  ctx.stroke();ctx.restore();
+}
+
+function updateStatusUI(){
+  const st=document.getElementById('status');
+  if(G.over){
+    const w=G.winner;st.textContent=w?`${w==='b'?'⚫':'⚪'} ${w==='b'?(gameMode==='ai'?'玩家':'黑方'):'白方'} 勝利！`:'🤝 平局！';
+    st.style.background=w?'rgba(80,40,0,.9)':'rgba(40,40,40,.9)';st.style.color='#ffd600';
+  }else{
+    const t=G.turn;const nm=t==='b'?(gameMode==='ai'?'⚫ 玩家':'⚫ 黑方'):'⚪ '+(gameMode==='ai'?'電腦AI':'白方');
+    st.textContent=`${nm} 落子…`;st.style.background='rgba(40,28,4,.85)';st.style.color='#f5dca0';
+  }
+  document.getElementById('pb').classList.toggle('active',G.turn==='b'&&!G.over);
+  document.getElementById('pw').classList.toggle('active',G.turn==='w'&&!G.over);
+  document.getElementById('mb').textContent=G.turn==='b'&&!G.over?(gameMode==='ai'?'▶ 你的回合':'▶ 你的回合'):'';
+  document.getElementById('mw').textContent=G.turn==='w'&&!G.over?(gameMode==='ai'?'🤖 思考中':'▶ 你的回合'):'';
+}
+
+// ── INPUT ──
+canvas.addEventListener('touchend',e=>{
+  e.preventDefault();const r=canvas.getBoundingClientRect();const t=e.changedTouches[0];
+  const sx=BSIZE/r.width,sy=BSIZE/r.height;
+  handleClick((t.clientX-r.left)*sx,(t.clientY-r.top)*sy);
+},{passive:false});
+canvas.addEventListener('mousedown',e=>{
+  const r=canvas.getBoundingClientRect();const sx=BSIZE/r.width,sy=BSIZE/r.height;
+  handleClick((e.clientX-r.left)*sx,(e.clientY-r.top)*sy);
+});
+
+function handleClick(px,py){
+  if(!G||G.over)return;
+  if(gameMode==='ai'&&G.turn==='w')return;
+  const c=Math.round((px-FRAME)/CS),r=Math.round((py-FRAME)/CS);
+  if(r<0||r>=SZ||c<0||c>=SZ)return;
+  place(r,c);
+}
+
+function place(r,c){
+  if(!G||G.over||G.board[r][c])return;
+  G.hist.push({r,c,turn:G.turn,board:G.board.map(row=>[...row])});
+  G.board[r][c]=G.turn;G.moveCnt++;
+  const wl=checkWin(G.board,r,c,G.turn);
+  if(wl){G.over=true;G.winner=G.turn;G.winLine=wl;render();setTimeout(()=>showOver(),600);return;}
+  if(G.moveCnt===SZ*SZ){G.over=true;render();setTimeout(()=>showOver(),600);return;}
+  G.turn=G.turn==='b'?'w':'b';render();
+  if(gameMode==='ai'&&G.turn==='w'&&!G.over){setTimeout(doAI,250);}
+}
+
+function undo(){
+  if(!G||!G.hist.length)return;
+  if(gameMode==='ai'&&G.hist.length>=2&&G.turn==='b'){G.hist.pop();}
+  const s=G.hist.pop();
+  G.board=s.board;G.turn=s.turn;G.over=false;G.winner=null;G.winLine=null;G.moveCnt=G.hist.length;
+  render();
+}
+
+function showOver(){
+  const w=G.winner;
+  document.getElementById('oe').textContent=w?(w==='b'?'⚫':'⚪'):'🤝';
+  document.getElementById('ot').textContent=w?`${w==='b'?(gameMode==='ai'?'玩家':'黑方'):'白方'} 獲勝！`:'平局！';
+  document.getElementById('os').textContent=`共下 ${G.moveCnt} 手`;
+  document.getElementById('scr-over').classList.remove('hide');
+}
+
+// ── WIN CHECK ──
+function checkWin(board,row,col,color){
+  const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+  for(const[dr,dc]of dirs){
+    const line=[{r:row,c:col}];
+    for(let i=1;i<5;i++){const r=row+dr*i,c=col+dc*i;if(r<0||r>=SZ||c<0||c>=SZ||board[r][c]!==color)break;line.push({r,c});}
+    for(let i=1;i<5;i++){const r=row-dr*i,c=col-dc*i;if(r<0||r>=SZ||c<0||c>=SZ||board[r][c]!==color)break;line.unshift({r,c});}
+    if(line.length>=5)return line.slice(0,5);
+  }
+  return null;
+}
+
+// ── AI ──
+function doAI(){
+  document.getElementById('ai-ind').style.display='block';
+  setTimeout(()=>{
+    const mv=aiMove();
+    document.getElementById('ai-ind').style.display='none';
+    if(mv)place(mv.r,mv.c);
+  },aiDiff==='hard'?350:150);
+}
+
+function countDir(board,r,c,dr,dc,col){
+  let cnt=0,rr=r+dr,cc=c+dc;
+  while(rr>=0&&rr<SZ&&cc>=0&&cc<SZ&&board[rr][cc]===col){cnt++;rr+=dr;cc+=dc;}
+  const open=rr>=0&&rr<SZ&&cc>=0&&cc<SZ&&board[rr][cc]===null;
+  return{cnt,open};
+}
+
+function scorePos(board,r,c,col){
+  if(board[r][c])return-1;
+  board[r][c]=col;let sc=0;
+  const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+  for(const[dr,dc]of dirs){
+    const f=countDir(board,r,c,dr,dc,col),b=countDir(board,r,c,-dr,-dc,col);
+    const tot=f.cnt+b.cnt+1,oe=(f.open?1:0)+(b.open?1:0);
+    if(tot>=5){sc+=1e6;break;}
+    if(tot===4)sc+=oe===2?1e5:oe===1?1e4:0;
+    else if(tot===3)sc+=oe===2?1e3:oe===1?100:0;
+    else if(tot===2)sc+=oe===2?50:oe===1?10:0;
+  }
+  board[r][c]=null;return sc;
+}
+
+function aiMove(){
+  const me='w',op='b',board=G.board;
+  // 1. Win move?
+  for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){if(!board[r][c]){board[r][c]=me;const w=checkWin(board,r,c,me);board[r][c]=null;if(w)return{r,c};}}
+  // 2. Block opponent win?
+  for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){if(!board[r][c]){board[r][c]=op;const w=checkWin(board,r,c,op);board[r][c]=null;if(w)return{r,c};}}
+  if(aiDiff==='easy'){
+    // Easy: score-based but only check nearby cells
+    let best=-1,bpos=null;
+    const cx=Math.round(SZ/2);
+    for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){
+      if(!board[r][c]&&hasNeighbor(board,r,c)){
+        const ms=scorePos(board,r,c,me),os=scorePos(board,r,c,op);
+        const sc=ms*1.2+os*.8+(SZ/2-Math.max(Math.abs(r-cx),Math.abs(c-cx)))*2;
+        if(sc>best){best=sc;bpos={r,c};}
+      }
+    }
+    // First move: center
+    if(!bpos){const h=Math.floor(SZ/2);return{r:h,c:h};}
+    return bpos;
+  }else{
+    // Hard: deeper evaluation
+    let best=-1,bpos=null;
+    for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){
+      if(!board[r][c]&&hasNeighbor(board,r,c,2)){
+        const ms=scorePos(board,r,c,me),os=scorePos(board,r,c,op);
+        const sc=ms*1.3+os;
+        if(sc>best){best=sc;bpos={r,c};}
+      }
+    }
+    if(!bpos){const h=Math.floor(SZ/2);return{r:h,c:h};}
+    return bpos;
+  }
+}
+
+function hasNeighbor(board,r,c,dist=1){
+  for(let dr=-dist;dr<=dist;dr++)for(let dc=-dist;dc<=dist;dc++){
+    if(!dr&&!dc)continue;const nr=r+dr,nc=c+dc;
+    if(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc])return true;
+  }
+  return false;
+}
+
+showMenu();
+function showMenu(){show('menu');}
+</script>
+</body>
+</html>
