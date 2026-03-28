@@ -641,6 +641,7 @@ function doFullAI(){
 
 function undo(){
   if(!G||!G.hist.length)return;
+  closeO();
   if(boardMode==='dark'){
     if(gameMode==='ai'&&G.hist.length>=2&&G.turn===G.myColor){G.hist.pop();}
     const s=G.hist.pop();G.board=s.board;G.turn=s.turn;G.myColor=s.myColor;G.rKalive=s.rKalive;G.bKalive=s.bKalive;
@@ -682,7 +683,8 @@ function showOver(){
   if(!G.winner&&!G.over)return;
   document.getElementById('oe').textContent=G.winner==='r'?'🔴':'🔵';
   const wn=G.winner==='r'?'紅方':'黑方';
-  document.getElementById('ot').textContent=`${wn} 獲勝！`;
+  const isPlayerWin=(gameMode==='ai'&&G.winner===G.myColor)||(gameMode!=='ai');
+  document.getElementById('ot').textContent=gameMode==='ai'?(isPlayerWin?'🎉 你贏了！':'😢 電腦獲勝！'):`${wn} 獲勝！`;
   document.getElementById('os').textContent=boardMode==='dark'?'暗棋對局結束':'象棋對局結束';
   document.getElementById('scr-over').classList.remove('hide');
 }
