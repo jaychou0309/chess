@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="魔法象棋">
+<title>🦄 魔法象棋王國</title>
+<style>
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+
+body {
+  margin: 0; padding: 0;
+  min-height: 100vh; min-height: -webkit-fill-available;
+  background: linear-gradient(160deg, #fce4ec 0%, #ede7f6 50%, #e8eaf6 100%);
+  font-family: -apple-system, 'PingFang TC', 'Hiragino Sans GB', sans-serif;
+  overflow: hidden;
+}
+
+/* ===== SCREENS ===== */
+.screen {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.35s ease;
+}
+.screen.hidden { opacity: 0; pointer-events: none; }
+
+/* ===== MENU ===== */
+#menu { gap: 0; }
+.menu-top { font-size: clamp(3.5rem, 12vw, 5rem); animation: float 3s ease-in-out infinite; margin-bottom: 8px; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+.menu-title { font-size: clamp(1.8rem, 7vw, 2.6rem); font-weight: 900; color: #6a1b9a; text-align: center; margin: 0 0 4px; text-shadow: 2px 3px 0 rgba(255,255,255,0.6); }
+.menu-sub { font-size: clamp(0.9rem, 3vw, 1.1rem); color: #9c27b0; margin: 0 0 32px; }
+
+.mbtn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: min(280px, 78vw); padding: 16px 24px; margin: 8px;
+  font-size: clamp(1rem, 4vw, 1.3rem); font-weight: bold; font-family: inherit;
+  border: none; border-radius: 50px; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.mbtn:active { transform: scale(0.93); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.mbtn-play { background: linear-gradient(135deg, #ab47bc, #6a1b9a); color: white; }
+.mbtn-learn { background: linear-gradient(135deg, #f48fb1, #c2185b); color: white; }
+.mbtn-about { background: linear-gradient(135deg, #81d4fa, #0288d1); color: white; }
+
+/* ===== GAME SCREEN ===== */
+#game { padding: 8px; gap: 5px; justify-content: center; }
+
+:root {
+  --bs: min(min(96vw, calc(100vh - 200px)), 560px);
+  --cs: calc(var(--bs) / 8);
+}
+
+.pinfo {
+  width: var(--bs); padding: 7px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-radius: 24px;
+  font-size: clamp(0.78rem, 2.4vw, 0.98rem); font-weight: bold;
+  transition: box-shadow 0.3s;
+}
+.pinfo-b { background: linear-gradient(135deg, #4a148c, #7b1fa2); color: white; }
+.pinfo-w { background: linear-gradient(135deg, #fce4ec, #f8bbd0); color: #6a1b9a; }
+.pinfo.active { box-shadow: 0 0 0 3px #ffd600, 0 0 16px rgba(255,214,0,0.5); }
+
+#board {
+  width: var(--bs); height: var(--bs);
+  display: grid; grid-template-columns: repeat(8, 1fr);
+  border-radius: 10px; overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.28);
+  border: 4px solid #6a1b9a;
+  flex-shrink: 0;
+}
+
+.cell {
+  width: var(--cs); height: var(--cs);
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--cs) * 0.62); cursor: pointer;
+  position: relative; transition: background 0.1s;
+  -webkit-touch-callout: none;
+}
+.cl { background: #f3e5f5; }
+.cd { background: #ce93d8; }
+.sel { background: rgba(255, 215, 0, 0.75) !important; }
+.lm { background: rgba(255, 235, 59, 0.38) !important; }
+.chk { background: rgba(244, 67, 54, 0.58) !important; animation: redpulse 0.7s ease infinite alternate; }
+@keyframes redpulse { from{background:rgba(244,67,54,0.58)!important} to{background:rgba(244,67,54,0.82)!important} }
+
+.cell.vm::after {
+  content: ''; position: absolute;
+  width: 33%; height: 33%; border-radius: 50%;
+  background: rgba(56, 142, 60, 0.55); pointer-events: none;
+}
+.cell.vc::after {
+  content: ''; position: absolute; inset: 3px; border-radius: 50%;
+  border: 4px solid rgba(56, 142, 60, 0.75); pointer-events: none;
+}
+.piece { line-height: 1; pointer-events: none; filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.22)); }
+
+#status {
+  width: var(--bs); padding: 7px 18px;
+  background: rgba(255,255,255,0.88); border-radius: 24px;
+  font-size: clamp(0.82rem, 2.6vw, 1rem); font-weight: bold;
+  color: #6a1b9a; text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: background 0.3s, color 0.3s;
+  flex-shrink: 0;
+}
+
+.gbtns { display: flex; gap: 8px; }
+.gbtn {
+  padding: 8px 14px; border: none; border-radius: 20px;
+  font-size: clamp(0.72rem, 2.3vw, 0.88rem); font-weight: bold; font-family: inherit;
+  cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transition: transform 0.1s;
+}
+.gbtn:active { transform: scale(0.92); }
+.gbtn-undo { background: #ffd600; color: #333; }
+.gbtn-new  { background: #4caf50; color: white; }
+.gbtn-home { background: #e0e0e0; color: #333; }
+
+/* ===== OVERLAYS ===== */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center; z-index: 200;
+}
+.overlay.hidden { display: none; }
+.dialog {
+  background: white; border-radius: 28px; padding: 28px 30px;
+  text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.38);
+  max-width: min(340px, 88vw);
+}
+.dialog h3 { color: #6a1b9a; margin: 0 0 18px; font-size: clamp(1rem,4vw,1.25rem); line-height: 1.4; }
+
+.promo-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.pbtn {
+  font-size: 2.6rem; background: #f3e5f5;
+  border: 3px solid #9c27b0; border-radius: 16px;
+  padding: 8px 12px; cursor: pointer; line-height: 1;
+  transition: transform 0.1s;
+}
+.pbtn:active { transform: scale(0.88); }
+.pbtn span { display: block; font-size: 0.7rem; color: #9c27b0; font-weight: bold; margin-top: 4px; }
+
+.go-emoji { font-size: 4rem; animation: bounce 0.5s ease infinite alternate; }
+@keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-16px)} }
+.go-title { font-size: clamp(1.5rem,6vw,2rem); color: #6a1b9a; font-weight: 900; margin: 10px 0 6px; }
+.go-sub { color: #666; margin-bottom: 20px; font-size: clamp(0.85rem,3vw,1rem); line-height: 1.5; }
+.go-btns { display: flex; flex-direction: column; gap: 10px; }
+.go-btns .mbtn { width: 100%; margin: 0; }
+
+/* ===== TUTORIAL ===== */
+#tutorial { padding: 0; align-items: stretch; }
+.tut-scroll {
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  flex: 1; width: 100%;
+  padding: 70px 16px 50px;
+}
+.tut-title { font-size: clamp(1.5rem,6vw,1.9rem); text-align: center; color: #6a1b9a; font-weight: 900; margin-bottom: 16px; }
+
+.back-btn {
+  position: fixed; top: 16px; left: 16px;
+  width: 46px; height: 46px; border-radius: 50%;
+  border: none; background: white;
+  font-size: 1.3rem; cursor: pointer;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.18); z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.sec-hdr {
+  font-size: clamp(1rem,4vw,1.2rem); color: #6a1b9a; font-weight: 900;
+  margin: 22px 0 10px; padding-bottom: 6px;
+  border-bottom: 3px solid #ce93d8;
+}
+
+.piece-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+
+.pcard {
+  background: white; border-radius: 18px; padding: 14px 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07); text-align: center;
+}
+.pcard .ico { font-size: clamp(2rem,7vw,2.8rem); }
+.pcard .pn { font-size: clamp(0.88rem,3vw,1rem); font-weight: bold; color: #6a1b9a; margin: 5px 0 2px; }
+.pcard .pe { font-size: clamp(0.7rem,2.2vw,0.78rem); color: #9c27b0; margin-bottom: 5px; }
+.pcard .pd { font-size: clamp(0.72rem,2.3vw,0.82rem); color: #555; line-height: 1.5; }
+.pcard .pm { font-size: clamp(0.7rem,2.2vw,0.8rem); color: #e91e8c; font-weight: bold; margin-top: 6px; }
+
+.rule-card {
+  background: linear-gradient(135deg, #f3e5f5, #e8eaf6);
+  border-radius: 18px; padding: 14px 16px; margin: 10px 0;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+}
+.rule-card .rt { font-size: clamp(0.95rem,3.5vw,1.1rem); font-weight: bold; color: #6a1b9a; margin-bottom: 7px; }
+.rule-card .rd { font-size: clamp(0.8rem,2.8vw,0.92rem); color: #444; line-height: 1.7; }
+
+.tip-card {
+  background: white; border-radius: 14px; padding: 12px 14px; margin: 8px 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.tip-card .ti { font-size: 1.7rem; flex-shrink: 0; }
+.tip-card .tt { font-size: clamp(0.8rem,2.8vw,0.9rem); color: #444; line-height: 1.5; }
+.tip-card .ttl { font-weight: bold; color: #6a1b9a; margin-bottom: 3px; }
+
+/* Knight diagram */
+.knight-diagram {
+  display: grid; grid-template-columns: repeat(5, 32px);
+  gap: 3px; margin: 12px auto; width: fit-content;
+}
+.kd { width:32px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+.kd-l { background: #f3e5f5; }
+.kd-d { background: #ce93d8; }
+.kd-p { background: rgba(255,215,0,0.75); }
+.kd-m { background: rgba(76,175,80,0.5); }
+</style>
+</head>
+<body>
+
+<!-- ============ MENU ============ -->
+<div class="screen" id="menu">
+  <div class="menu-top">🦄🏰🐉</div>
+  <h1 class="menu-title">魔法象棋王國</h1>
+  <p class="menu-sub">✨ 超可愛西洋象棋 ✨</p>
+  <button class="mbtn mbtn-play" onclick="showGame()">🎮 開始遊戲</button>
+  <button class="mbtn mbtn-learn" onclick="showTutorial()">📚 學習規則</button>
+</div>
+
+<!-- ============ GAME ============ -->
+<div class="screen hidden" id="game">
+  <div class="pinfo pinfo-b" id="pinfo-b">
+    <span>🐉 紫色王國</span>
+    <span id="cap-w" style="letter-spacing:-1px;font-size:0.78em;flex:1;text-align:center;"></span>
+    <span id="turn-b" style="font-size:0.85em;"></span>
+  </div>
+  <div id="board"></div>
+  <div id="status">🦄 粉色王國 輪到你了！</div>
+  <div class="pinfo pinfo-w" id="pinfo-w">
+    <span>🦄 粉色王國</span>
+    <span id="cap-b" style="letter-spacing:-1px;font-size:0.78em;flex:1;text-align:center;"></span>
+    <span id="turn-w" style="font-size:0.85em;">⭐ 你的回合</span>
+  </div>
+  <div class="gbtns">
+    <button class="gbtn gbtn-undo" onclick="undoMove()">↩️ 悔棋</button>
+    <button class="gbtn gbtn-new"  onclick="newGame()">🔄 新遊戲</button>
+    <button class="gbtn gbtn-home" onclick="showMenu()">🏠 選單</button>
+  </div>
+</div>
+
+<!-- ============ TUTORIAL ============ -->
+<div class="screen hidden" id="tutorial">
+  <button class="back-btn" onclick="showMenu()">←</button>
+  <div class="tut-scroll">
+    <div class="tut-title">📚 學習西洋象棋</div>
+
+    <div class="rule-card">
+      <div class="rt">🌟 什麼是西洋象棋？</div>
+      <div class="rd">
+        西洋象棋是兩個人對弈的智力遊戲！<br>
+        🦄 <b>粉色王國</b> 對戰 🐉 <b>紫色王國</b><br><br>
+        棋盤有 <b>64 個格子（8×8）</b>，每人有 <b>16 個棋子</b>。<br><br>
+        🎯 <b>目標：</b>把對方的<b>國王</b>困住，讓他無路可逃！
+      </div>
+    </div>
+
+    <div class="sec-hdr">🎭 認識棋子</div>
+
+    <div class="piece-grid">
+      <div class="pcard">
+        <div class="ico">👸🤴</div>
+        <div class="pn">國王 King</div>
+        <div class="pe">最重要的棋子！</div>
+        <div class="pd">每次只能往旁邊移動<b>一格</b>，可以朝<b>任何方向</b>走。必須好好保護，被困住就輸了！</div>
+        <div class="pm">👑 任意方向，每次1格</div>
+      </div>
+
+      <div class="pcard">
+        <div class="ico">🦄🐉</div>
+        <div class="pn">王后 Queen</div>
+        <div class="pe">最厲害的棋子！</div>
+        <div class="pd">可以朝<b>任何方向</b>走，橫的、直的、斜的都可以，而且可以走<b>很遠</b>！</div>
+        <div class="pm">⭐ 任意方向，任意距離</div>
+      </div>
+
+      <div class="pcard">
+        <div class="ico">🏰🏯</div>
+        <div class="pn">城堡 Rook</div>
+        <div class="pe">強大的守衛！</div>
+        <div class="pd">只能<b>橫著</b>或<b>直著</b>走，但可以走<b>很遠</b>！就像城牆一樣走直線。</div>
+        <div class="pm">➕ 橫直方向，任意距離</div>
+      </div>
+
+      <div class="pcard">
+        <div class="ico">🧚🦋</div>
+        <div class="pn">主教 Bishop</div>
+        <div class="pe">神奇的精靈！</div>
+        <div class="pd">只能<b>斜著</b>走，可以走<b>很遠</b>！一隻在淺色格，另一隻在深色格，永遠不換。</div>
+        <div class="pm">✖️ 斜線方向，任意距離</div>
+      </div>
+
+      <div class="pcard">
+        <div class="ico">🐴🦊</div>
+        <div class="pn">騎士 Knight</div>
+        <div class="pe">最特別的棋子！</div>
+        <div class="pd">走<b>L形</b>：先走2格再轉彎走1格。最厲害的是可以<b>跳過</b>其他棋子！</div>
+        <div class="pm">🐎 L形跳躍（2+1格）</div>
+      </div>
+
+      <div class="pcard">
+        <div class="ico">🐣🌸</div>
+        <div class="pn">士兵 Pawn</div>
+        <div class="pe">勇敢的小兵！</div>
+        <div class="pd">只能<b>向前</b>走1格（第一步可以走2格），要<b>斜著</b>吃對方棋子。走到對面可以<b>升級</b>！</div>
+        <div class="pm">⬆️ 向前走，斜線吃子</div>
+      </div>
+    </div>
+
+    <div class="sec-hdr">🐴 騎士的 L 形走法</div>
+    <div class="rule-card">
+      <div class="rd" style="text-align:center;">
+        ⭐ 是騎士，🟢 是它可以跳去的地方：
+      </div>
+      <div class="knight-diagram">
+        <div class="kd kd-l"></div><div class="kd kd-m">🟢</div><div class="kd kd-l"></div><div class="kd kd-d" style="background:rgba(76,175,80,0.5)">🟢</div><div class="kd kd-l"></div>
+        <div class="kd kd-m">🟢</div><div class="kd kd-l"></div><div class="kd kd-d"></div><div class="kd kd-l"></div><div class="kd kd-d" style="background:rgba(76,175,80,0.5)">🟢</div>
+        <div class="kd kd-l"></div><div class="kd kd-d"></div><div class="kd kd-p">⭐</div><div class="kd kd-d"></div><div class="kd kd-l"></div>
+        <div class="kd kd-m">🟢</div><div class="kd kd-l"></div><div class="kd kd-d"></div><div class="kd kd-l"></div><div class="kd kd-d" style="background:rgba(76,175,80,0.5)">🟢</div>
+        <div class="kd kd-l"></div><div class="kd kd-m">🟢</div><div class="kd kd-l"></div><div class="kd kd-d" style="background:rgba(76,175,80,0.5)">🟢</div><div class="kd kd-l"></div>
+      </div>
+    </div>
+
+    <div class="sec-hdr">⚠️ 重要規則</div>
+
+    <div class="rule-card">
+      <div class="rt">⚠️ 將軍（Check）</div>
+      <div class="rd">當你的棋子可以吃掉對方<b>國王</b>時，就叫「將軍」！<br>被將軍的那方<b>必須馬上</b>保護國王（移動國王、擋住攻擊、或吃掉攻擊的棋子）。<br>🔴 被將軍時，國王的格子會變成<b>紅色</b>提醒你！</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rt">🏆 將死（Checkmate）</div>
+      <div class="rd">被將軍但<b>完全沒有辦法</b>讓國王脫困，就叫「將死」！被將死的一方<b>輸了</b>。<br>讓對方的國王將死是你的<b>最終目標</b>！🎯</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rt">🌟 士兵升級（Promotion）</div>
+      <div class="rd">士兵（🐣 或 🌸）走到棋盤<b>最遠的那一排</b>，可以升級成更強的棋子！<br>可以選擇：王后、城堡、主教、騎士。<br>👑 通常選<b>王后</b>最好，因為王后是最強的！</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rt">🏰 王車易位（Castling）</div>
+      <div class="rd">國王和城堡可以同時移動的特殊規則！<br>條件：兩者之間沒有其他棋子，而且都<b>還沒移動過</b>。<br>這是保護國王的好方法，讓他躲到安全的角落。</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rt">🤝 平局（Stalemate）</div>
+      <div class="rd">輪到某一方走棋，但他的<b>所有棋子都無法移動</b>（也沒有被將軍），就是「平局」！<br>兩個人都不算輸。</div>
+    </div>
+
+    <div class="sec-hdr">💡 初學者小技巧</div>
+
+    <div class="tip-card">
+      <div class="ti">🎯</div>
+      <div class="tt"><div class="ttl">控制中央！</div>把棋子移到棋盤中間，從中間可以攻擊更多地方。</div>
+    </div>
+    <div class="tip-card">
+      <div class="ti">👑</div>
+      <div class="tt"><div class="ttl">保護國王！</div>國王是最重要的！盡早讓他躲到棋盤角落（王車易位）。</div>
+    </div>
+    <div class="tip-card">
+      <div class="ti">🤔</div>
+      <div class="tt"><div class="ttl">移棋前先想想！</div>走之前先問自己：「我的棋子會不會被吃掉？」、「我能吃掉對方的棋子嗎？」</div>
+    </div>
+    <div class="tip-card">
+      <div class="ti">🐣</div>
+      <div class="tt"><div class="ttl">讓士兵前進！</div>把士兵推向對方陣地，走到底就能變成強大的王后！</div>
+    </div>
+    <div class="tip-card">
+      <div class="ti">😊</div>
+      <div class="tt"><div class="ttl">多練習，不怕輸！</div>象棋需要時間學，每局都有新收穫。輸了沒關係，再來一局！</div>
+    </div>
+
+    <div style="text-align:center; margin-top:28px; padding-bottom:10px;">
+      <button class="mbtn mbtn-play" onclick="showGame()" style="margin:auto;">🎮 開始遊戲！</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PROMOTION DIALOG ============ -->
+<div class="overlay hidden" id="promo-overlay">
+  <div class="dialog">
+    <h3>🎉 士兵升級了！<br>選擇新棋子：</h3>
+    <div class="promo-row" id="promo-choices"></div>
+  </div>
+</div>
+
+<!-- ============ GAME OVER DIALOG ============ -->
+<div class="overlay hidden" id="go-overlay">
+  <div class="dialog">
+    <div class="go-emoji" id="go-emoji">🏆</div>
+    <div class="go-title" id="go-title"></div>
+    <div class="go-sub"   id="go-sub"></div>
+    <div class="go-btns">
+      <button class="mbtn mbtn-play"  onclick="newGame(); closeGO()">🔄 再玩一次！</button>
+      <button class="mbtn mbtn-learn" onclick="showMenu(); closeGO()">🏠 主選單</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// PIECE DATA
+// ════════════════════════════════════════════
+const PI = {
+  wK:{e:'👸',n:'粉色國王'}, wQ:{e:'🦄',n:'粉色王后'},
+  wR:{e:'🏰',n:'粉色城堡'}, wB:{e:'🧚',n:'粉色精靈'},
+  wN:{e:'🐴',n:'粉色小馬'}, wP:{e:'🐣',n:'粉色小兵'},
+  bK:{e:'🤴',n:'紫色國王'}, bQ:{e:'🐉',n:'紫色王后'},
+  bR:{e:'🏯',n:'紫色城堡'}, bB:{e:'🦋',n:'紫色精靈'},
+  bN:{e:'🦊',n:'紫色騎士'}, bP:{e:'🌸',n:'紫色小兵'},
+};
+const PROMO_W = [{t:'Q',e:'🦄',n:'王后'},{t:'R',e:'🏰',n:'城堡'},{t:'B',e:'🧚',n:'精靈'},{t:'N',e:'🐴',n:'騎士'}];
+const PROMO_B = [{t:'Q',e:'🐉',n:'王后'},{t:'R',e:'🏯',n:'城堡'},{t:'B',e:'🦋',n:'精靈'},{t:'N',e:'🦊',n:'騎士'}];
+
+// ════════════════════════════════════════════
+// GAME STATE
+// ════════════════════════════════════════════
+let B=[], turn='w', sel=null, vMoves=[], over=false;
+let hist=[], ep=null, cr={}, caps={w:[],b:[]}, lm=null, pending=null;
+
+function initGame() {
+  B = [
+    ['bR','bN','bB','bQ','bK','bB','bN','bR'],
+    ['bP','bP','bP','bP','bP','bP','bP','bP'],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    ['wP','wP','wP','wP','wP','wP','wP','wP'],
+    ['wR','wN','wB','wQ','wK','wB','wN','wR'],
+  ];
+  turn='w'; sel=null; vMoves=[]; over=false; hist=[];
+  ep=null; cr={wK:true,wKR:true,wQR:true,bK:true,bKR:true,bQR:true};
+  caps={w:[],b:[]}; lm=null; pending=null;
+}
+
+function cloneB(b){ return b.map(r=>[...r]); }
+function saveS(){
+  return { B:cloneB(B), turn, ep:ep?{...ep}:null, cr:{...cr},
+           caps:{w:[...caps.w],b:[...caps.b]}, lm:lm?{...lm}:null };
+}
+
+// ════════════════════════════════════════════
+// CHESS ENGINE
+// ════════════════════════════════════════════
+function pseudoM(b, row, col, epT) {
+  const p=b[row][col]; if(!p) return [];
+  const c=p[0], t=p[1], opp=c==='w'?'b':'w', mv=[];
+  const ok=(r,c)=>r>=0&&r<=7&&c>=0&&c<=7;
+
+  function slide(dr,dc){
+    for(let i=1;i<=7;i++){
+      const r=row+dr*i, cc=col+dc*i;
+      if(!ok(r,cc)) break;
+      if(b[r][cc]){ if(b[r][cc][0]===opp) mv.push({r,c:cc}); break; }
+      mv.push({r,c:cc});
+    }
+  }
+
+  if(t==='P'){
+    const d=c==='w'?-1:1, sr=c==='w'?6:1;
+    if(ok(row+d,col)&&!b[row+d][col]){
+      mv.push({r:row+d,c:col});
+      if(row===sr&&!b[row+2*d][col]) mv.push({r:row+2*d,c:col,dp:true});
+    }
+    for(const dc of[-1,1]){
+      const r=row+d, cc=col+dc; if(!ok(r,cc)) continue;
+      if(b[r][cc]&&b[r][cc][0]===opp) mv.push({r,c:cc});
+      if(epT&&epT.row===r&&epT.col===cc) mv.push({r,c:cc,ep:true});
+    }
+  } else if(t==='R'){
+    [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dr,dc])=>slide(dr,dc));
+  } else if(t==='N'){
+    [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]].forEach(([dr,dc])=>{
+      const r=row+dr, cc=col+dc;
+      if(ok(r,cc)&&(!b[r][cc]||b[r][cc][0]===opp)) mv.push({r,c:cc});
+    });
+  } else if(t==='B'){
+    [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([dr,dc])=>slide(dr,dc));
+  } else if(t==='Q'){
+    [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([dr,dc])=>slide(dr,dc));
+  } else if(t==='K'){
+    [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([dr,dc])=>{
+      const r=row+dr, cc=col+dc;
+      if(ok(r,cc)&&(!b[r][cc]||b[r][cc][0]===opp)) mv.push({r,c:cc});
+    });
+  }
+  return mv;
+}
+
+function attacked(b, row, col, byC){
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++)
+    if(b[r][c]&&b[r][c][0]===byC&&pseudoM(b,r,c,null).some(m=>m.r===row&&m.c===col)) return true;
+  return false;
+}
+
+function findKing(b, c){
+  for(let r=0;r<8;r++) for(let cc=0;cc<8;cc++) if(b[r][cc]===c+'K') return {r,c:cc};
+  return null;
+}
+function inCheck(b, c){ const k=findKing(b,c); return k?attacked(b,k.r,k.c,c==='w'?'b':'w'):false; }
+
+function applyM(b, fr, fc, tr, tc, mv, crIn, epIn){
+  const nb=cloneB(b), piece=nb[fr][fc], nCR={...crIn};
+  let nEP=null, cap=null;
+  if(mv.ep){ cap=nb[fr][tc]; nb[fr][tc]=null; }
+  else if(nb[tr][tc]) cap=nb[tr][tc];
+  nb[tr][tc]=piece; nb[fr][fc]=null;
+  if(mv.dp) nEP={row:(fr+tr)/2,col:tc};
+  if(mv.cKs){ nb[tr][5]=piece[0]+'R'; nb[tr][7]=null; }
+  if(mv.cQs){ nb[tr][3]=piece[0]+'R'; nb[tr][0]=null; }
+  if(piece==='wK'){nCR.wK=false;nCR.wKR=false;nCR.wQR=false;}
+  if(piece==='bK'){nCR.bK=false;nCR.bKR=false;nCR.bQR=false;}
+  if(fr===7&&fc===7) nCR.wKR=false; if(fr===7&&fc===0) nCR.wQR=false;
+  if(fr===0&&fc===7) nCR.bKR=false; if(fr===0&&fc===0) nCR.bQR=false;
+  return {nb,nCR,nEP,cap};
+}
+
+function getLegal(b, fr, fc, epT, crIn){
+  const piece=b[fr][fc]; if(!piece) return [];
+  const c=piece[0], t=piece[1], opp=c==='w'?'b':'w';
+  let pm=pseudoM(b,fr,fc,epT);
+  if(t==='K'){
+    const br=c==='w'?7:0;
+    if(fr===br&&fc===4){
+      const kk=c+'K',kr=c+'KR',qr=c+'QR';
+      if(crIn[kk]&&crIn[kr]&&!b[br][5]&&!b[br][6]&&b[br][7]===c+'R')
+        if(!attacked(b,br,4,opp)&&!attacked(b,br,5,opp)&&!attacked(b,br,6,opp))
+          pm.push({r:br,c:6,cKs:true});
+      if(crIn[kk]&&crIn[qr]&&!b[br][3]&&!b[br][2]&&!b[br][1]&&b[br][0]===c+'R')
+        if(!attacked(b,br,4,opp)&&!attacked(b,br,3,opp)&&!attacked(b,br,2,opp))
+          pm.push({r:br,c:2,cQs:true});
+    }
+  }
+  return pm.filter(mv=>{ const {nb}=applyM(b,fr,fc,mv.r,mv.c,mv,crIn,epT); return !inCheck(nb,c); });
+}
+
+function hasLegal(b, c, epT, crIn){
+  for(let r=0;r<8;r++) for(let cc=0;cc<8;cc++)
+    if(b[r][cc]&&b[r][cc][0]===c&&getLegal(b,r,cc,epT,crIn).length>0) return true;
+  return false;
+}
+
+// ════════════════════════════════════════════
+// ACTIONS
+// ════════════════════════════════════════════
+function cellClick(row, col){
+  if(over) return;
+  const piece=B[row][col];
+  if(sel){
+    const mv=vMoves.find(m=>m.r===row&&m.c===col);
+    if(mv){ doMove(sel.row,sel.col,row,col,mv); return; }
+    if(piece&&piece[0]===turn){ sel={row,col}; vMoves=getLegal(B,row,col,ep,cr); renderBoard(); return; }
+    sel=null; vMoves=[]; renderBoard(); return;
+  }
+  if(piece&&piece[0]===turn){ sel={row,col}; vMoves=getLegal(B,row,col,ep,cr); renderBoard(); }
+}
+
+function doMove(fr,fc,tr,tc,mv){
+  const piece=B[fr][fc];
+  if(piece[1]==='P'&&(tr===0||tr===7)){ pending={fr,fc,tr,tc,mv}; showPromo(piece[0]); return; }
+  commitMove(fr,fc,tr,tc,mv,null);
+}
+
+function commitMove(fr,fc,tr,tc,mv,promT){
+  hist.push(saveS());
+  const {nb,nCR,nEP,cap}=applyM(B,fr,fc,tr,tc,mv,cr,ep);
+  if(promT) nb[tr][tc]=turn+promT;
+  if(cap) caps[turn].push(cap);
+  B=nb; cr=nCR; ep=nEP; lm={fr,fc,tr,tc};
+  sel=null; vMoves=[]; turn=turn==='w'?'b':'w';
+  checkEnd(); renderBoard();
+}
+
+function showPromo(color){
+  const opts=color==='w'?PROMO_W:PROMO_B;
+  document.getElementById('promo-choices').innerHTML =
+    opts.map(o=>`<button class="pbtn" onclick="doPromo('${o.t}')">${o.e}<span>${o.n}</span></button>`).join('');
+  document.getElementById('promo-overlay').classList.remove('hidden');
+}
+function doPromo(t){
+  document.getElementById('promo-overlay').classList.add('hidden');
+  const {fr,fc,tr,tc,mv}=pending; pending=null;
+  commitMove(fr,fc,tr,tc,mv,t);
+}
+
+function checkEnd(){
+  if(!hasLegal(B,turn,ep,cr)){
+    over=true;
+    if(inCheck(B,turn)){
+      const w=turn==='b'?'🦄 粉色王國':'🐉 紫色王國';
+      showGO('🏆',`${w} 獲勝！`,'✨ 將死！對方國王無路可逃了！🎊');
+    } else {
+      showGO('🤝','平局！','僵局！無棋可走，遊戲平局。');
+    }
+  }
+}
+
+function showGO(e,t,s){
+  document.getElementById('go-emoji').textContent=e;
+  document.getElementById('go-title').textContent=t;
+  document.getElementById('go-sub').textContent=s;
+  document.getElementById('go-overlay').classList.remove('hidden');
+}
+function closeGO(){ document.getElementById('go-overlay').classList.add('hidden'); }
+
+function undoMove(){
+  if(!hist.length) return;
+  const s=hist.pop();
+  B=s.B; turn=s.turn; ep=s.ep; cr=s.cr; caps=s.caps; lm=s.lm;
+  sel=null; vMoves=[]; over=false; pending=null;
+  closeGO(); renderBoard();
+}
+function newGame(){ initGame(); closeGO(); renderBoard(); }
+
+// ════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════
+function renderBoard(){
+  const boardEl=document.getElementById('board');
+  boardEl.innerHTML='';
+  const ic=inCheck(B,turn), kp=ic?findKing(B,turn):null;
+
+  for(let row=0;row<8;row++){
+    for(let col=0;col<8;col++){
+      const cell=document.createElement('div');
+      const isLight=(row+col)%2===0;
+      let cls='cell '+(isLight?'cl':'cd');
+      if(sel&&sel.row===row&&sel.col===col) cls+=' sel';
+      else if(lm&&((lm.fr===row&&lm.fc===col)||(lm.tr===row&&lm.tc===col))) cls+=' lm';
+      if(kp&&kp.r===row&&kp.c===col) cls+=' chk';
+      const vm=vMoves.find(m=>m.r===row&&m.c===col);
+      if(vm){ cls+=B[row][col]?' vc':' vm'; }
+      cell.className=cls;
+      cell.addEventListener('click',()=>cellClick(row,col));
+      // Touch support
+      cell.addEventListener('touchend',(e)=>{ e.preventDefault(); cellClick(row,col); },{passive:false});
+
+      const p=B[row][col];
+      if(p){ const sp=document.createElement('span'); sp.className='piece'; sp.textContent=PI[p]?.e||'?'; cell.appendChild(sp); }
+      boardEl.appendChild(cell);
+    }
+  }
+
+  const st=document.getElementById('status');
+  if(!over){
+    const tn=turn==='w'?'🦄 粉色王國':'🐉 紫色王國';
+    if(ic){ st.textContent=`⚠️ ${tn} — 將軍！快保護國王！`; st.style.background='rgba(255,80,80,0.88)'; st.style.color='white'; }
+    else   { st.textContent=`${tn} 輪到你了！`; st.style.background='rgba(255,255,255,0.88)'; st.style.color='#6a1b9a'; }
+  }
+
+  document.getElementById('pinfo-w').classList.toggle('active',turn==='w');
+  document.getElementById('pinfo-b').classList.toggle('active',turn==='b');
+  document.getElementById('turn-w').textContent=turn==='w'?'⭐ 你的回合':'';
+  document.getElementById('turn-b').textContent=turn==='b'?'⭐ 你的回合':'';
+  document.getElementById('cap-w').textContent=caps.w.map(p=>PI[p]?.e||'').join('');
+  document.getElementById('cap-b').textContent=caps.b.map(p=>PI[p]?.e||'').join('');
+}
+
+// ════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════
+function show(id){
+  ['menu','game','tutorial'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==id));
+}
+function showMenu(){ show('menu'); }
+function showTutorial(){ show('tutorial'); }
+function showGame(){
+  show('game');
+  if(!B.length) initGame();
+  renderBoard();
+}
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+initGame();
+showMenu();
+</script>
+</body>
+</html>
