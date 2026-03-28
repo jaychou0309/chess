@@ -438,19 +438,22 @@ function flipDark(r,c){
   nextTurnDark();
 }
 
+function countPieces(col){
+  let n=0;
+  for(let r=0;r<4;r++)for(let c=0;c<8;c++){const cell=G.board[r][c];if(cell&&cell.piece[0]===col)n++;}
+  return n;
+}
+
 function doDarkMove(fr,fc,tr,tc){
   G.hist.push(saveDarkState());
-  const target=G.board[tr][tc];
-  // Capture check
-  if(target&&target.revealed&&target.piece==='bK'){G.bKalive=false;}
-  if(target&&target.revealed&&target.piece==='rK'){G.rKalive=false;}
   G.board[tr][tc]=G.board[fr][fc];
   G.board[fr][fc]=null;
   sel=null;vmoves=[];
-  // Check win
-  if(!G.bKalive||!G.rKalive){
+  // Win = wipe out ALL opponent pieces
+  const opp=G.board[tr][tc].piece[0]==='r'?'b':'r';
+  if(countPieces(opp)===0){
     G.over=true;
-    G.winner=!G.bKalive?'r':'b';// red wins if black king gone; black wins if red king gone
+    G.winner=G.board[tr][tc].piece[0];
     render();setTimeout(showOver,400);return;
   }
   // Check if opponent has any moves left
@@ -468,7 +471,6 @@ function saveDarkState(){
   return{
     board:G.board.map(r=>r.map(c=>c?{...c}:null)),
     turn:G.turn,myColor:G.myColor,
-    rKalive:G.rKalive,bKalive:G.bKalive,
   };
 }
 
@@ -494,12 +496,19 @@ function getDarkMoves(r,c){
         nr+=dr;nc+=dc;
       }
     });
-  }else if(type==='C'){// 炮: move like rook (no capture), capture by jump
+  }else if(type==='C'){// 炮: slide to move, jump 1 screen to capture any enemy (no rank limit)
     dirs.forEach(([dr,dc])=>{let nr=r+dr,nc=c+dc,screen=false;
       while(ok(nr,nc)){
         const t=G.board[nr][nc];
-        if(!screen){if(!t)mv.push({r:nr,c:nc});else screen=true;}
-        else{if(t){if(t.revealed&&t.piece[0]!==col&&darkCanBeat(cell.piece,t.piece))mv.push({r:nr,c:nc});break;}}
+        if(!screen){
+          if(!t)mv.push({r:nr,c:nc});
+          else screen=true;// found screen, start looking for capture target
+        }else{
+          if(t){
+            if(t.piece[0]!==col)mv.push({r:nr,c:nc});// can capture ANY enemy piece
+            break;// stop after first piece past screen
+          }
+        }
         nr+=dr;nc+=dc;
       }
     });
@@ -644,7 +653,7 @@ function undo(){
   closeO();
   if(boardMode==='dark'){
     if(gameMode==='ai'&&G.hist.length>=2&&G.turn===G.myColor){G.hist.pop();}
-    const s=G.hist.pop();G.board=s.board;G.turn=s.turn;G.myColor=s.myColor;G.rKalive=s.rKalive;G.bKalive=s.bKalive;
+    const s=G.hist.pop();G.board=s.board;G.turn=s.turn;G.myColor=s.myColor;
   }else{
     if(gameMode==='ai'&&G.hist.length>=2&&G.turn==='r')G.hist.pop();
     const s=G.hist.pop();G.board=s.board;G.turn=s.turn;
