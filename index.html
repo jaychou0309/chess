@@ -8,22 +8,43 @@
 <title>🎮 Jay 的遊戲室</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:#0d0b06;min-height:100vh;font-family:-apple-system,'PingFang TC','Hiragino Sans GB',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;overflow-y:auto}
-.hdr{text-align:center;margin-bottom:28px}
+body{background:#0d0b06;min-height:100vh;font-family:-apple-system,'PingFang TC','Hiragino Sans GB',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 16px 40px;overflow-y:auto}
+.hdr{text-align:center;margin-bottom:26px}
 .hdr-ic{font-size:clamp(3rem,10vw,4.5rem);animation:fl 3s ease-in-out infinite}
 @keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .hdr-t{font-size:clamp(1.8rem,6vw,2.8rem);font-weight:900;color:#d4a030;text-shadow:0 0 22px rgba(212,160,48,.45);margin:6px 0 3px}
 .hdr-s{font-size:clamp(.8rem,2.5vw,.95rem);color:#8d6e33}
+
+/* Section labels */
+.sec{width:100%;max-width:980px;font-size:clamp(.78rem,2.2vw,.88rem);color:#6b5020;font-weight:bold;letter-spacing:.06em;margin:8px 0 8px;padding-left:4px;text-transform:uppercase}
+.sec::before{content:'';display:inline-block;width:3px;height:.85em;background:#d4a030;border-radius:2px;margin-right:7px;vertical-align:middle}
+
 .games{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(290px,90vw),1fr));gap:14px;width:100%;max-width:980px}
-.card{background:linear-gradient(150deg,#1c1306,#110d03);border:1.5px solid #3a2500;border-radius:22px;padding:22px 20px;cursor:pointer;text-decoration:none;display:block;transition:transform .14s,box-shadow .14s,border-color .14s;box-shadow:0 8px 26px rgba(0,0,0,.55)}
+.card{background:linear-gradient(150deg,#1c1306,#110d03);border:1.5px solid #3a2500;border-radius:22px;padding:20px 18px;cursor:pointer;text-decoration:none;display:block;transition:transform .14s,box-shadow .14s,border-color .14s;box-shadow:0 8px 26px rgba(0,0,0,.55)}
 .card:active{transform:scale(.96);box-shadow:0 3px 12px rgba(0,0,0,.4);border-color:#d4a030}
+/* special color for kingdom card */
+.card-kingdom{background:linear-gradient(150deg,#1a0a02,#120500);border-color:#5a2000}
+.card-kingdom:active{border-color:#ff6d00}
+.card-dark{background:linear-gradient(150deg,#0d0d1a,#070710);border-color:#2a2060}
+.card-dark:active{border-color:#7c4dff}
+
 .c-ic{font-size:clamp(2.4rem,8vw,3.2rem);margin-bottom:10px;display:block}
-.c-nm{font-size:clamp(1.2rem,4vw,1.6rem);font-weight:900;color:#d4a030;margin-bottom:1px}
-.c-en{font-size:clamp(.72rem,2vw,.82rem);color:#7a5e22;margin-bottom:8px}
-.c-ds{font-size:clamp(.78rem,2.3vw,.9rem);color:#c8a060;line-height:1.65}
-.c-tg{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
-.tag{background:rgba(212,160,48,.1);border:1px solid rgba(212,160,48,.28);border-radius:18px;padding:2px 9px;font-size:clamp(.66rem,1.8vw,.76rem);color:#c8a030}
-.pbtn{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;padding:10px 0;background:linear-gradient(135deg,#d4a030,#a0600a);color:white;border:none;border-radius:28px;font-size:clamp(.88rem,2.5vw,1rem);font-weight:bold;font-family:inherit;cursor:pointer;width:100%}
+.c-nm{font-size:clamp(1.2rem,4vw,1.55rem);font-weight:900;color:#d4a030;margin-bottom:1px}
+.card-kingdom .c-nm{color:#ff9800}
+.card-dark .c-nm{color:#b39ddb}
+.c-en{font-size:clamp(.7rem,2vw,.8rem);color:#7a5e22;margin-bottom:7px}
+.card-kingdom .c-en{color:#a0520a}
+.card-dark .c-en{color:#7060a0}
+.c-ds{font-size:clamp(.78rem,2.3vw,.88rem);color:#c8a060;line-height:1.65}
+.card-kingdom .c-ds{color:#d4956a}
+.card-dark .c-ds{color:#b0a0d0}
+.c-tg{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.tag{background:rgba(212,160,48,.1);border:1px solid rgba(212,160,48,.28);border-radius:18px;padding:2px 9px;font-size:clamp(.64rem,1.8vw,.75rem);color:#c8a030}
+.card-kingdom .tag{background:rgba(255,109,0,.1);border-color:rgba(255,109,0,.3);color:#ff9800}
+.card-dark .tag{background:rgba(124,77,255,.1);border-color:rgba(124,77,255,.3);color:#b39ddb}
+.pbtn{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:13px;padding:10px 0;background:linear-gradient(135deg,#d4a030,#a0600a);color:white;border:none;border-radius:28px;font-size:clamp(.88rem,2.5vw,1rem);font-weight:bold;font-family:inherit;cursor:pointer;width:100%}
+.card-kingdom .pbtn{background:linear-gradient(135deg,#ff6d00,#e65100)}
+.card-dark .pbtn{background:linear-gradient(135deg,#7c4dff,#4527a0)}
 .stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
 .s{position:absolute;background:rgba(212,160,48,.55);border-radius:50%;animation:tw 2.5s ease-in-out infinite}
 @keyframes tw{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.8;transform:scale(1.5)}}
@@ -36,38 +57,92 @@ body{background:#0d0b06;min-height:100vh;font-family:-apple-system,'PingFang TC'
   <div class="hdr">
     <div class="hdr-ic">🎮</div>
     <div class="hdr-t">Jay 的遊戲室</div>
-    <div class="hdr-s">棋盤遊戲合集 · Board Games Collection</div>
+    <div class="hdr-s">棋盤 & 動作遊戲合集 · Games Collection</div>
   </div>
+
+  <!-- ── 棋盤遊戲 ── -->
+  <div class="sec">♟ 棋盤遊戲</div>
   <div class="games">
     <a class="card" href="chess.html">
       <span class="c-ic">♟</span>
       <div class="c-nm">西洋象棋</div>
       <div class="c-en">International Chess</div>
       <div class="c-ds">經典精美木質棋盤，可對戰電腦AI或雙人對局，含詳細語音教學！</div>
-      <div class="c-tg"><span class="tag">🤖 AI對手</span><span class="tag">👫 雙人</span><span class="tag">🔊 語音教學</span></div>
+      <div class="c-tg">
+        <span class="tag">🤖 AI對手</span>
+        <span class="tag">👫 雙人</span>
+        <span class="tag">🔊 語音教學</span>
+      </div>
       <button class="pbtn">▶ 開始遊戲</button>
     </a>
+
     <a class="card" href="gomoku.html">
       <span class="c-ic">⚫</span>
       <div class="c-nm">五子棋</div>
       <div class="c-en">Gomoku · Five in a Row</div>
       <div class="c-ds">先連成5子就贏！簡單易學、深奧難精。15×15棋盤，支援AI對戰與雙人模式。</div>
-      <div class="c-tg"><span class="tag">🤖 AI對手</span><span class="tag">👫 雙人</span><span class="tag">15×15</span></div>
+      <div class="c-tg">
+        <span class="tag">🤖 AI對手</span>
+        <span class="tag">👫 雙人</span>
+        <span class="tag">15×15棋盤</span>
+      </div>
       <button class="pbtn">▶ 開始遊戲</button>
     </a>
+
     <a class="card" href="xiangqi.html">
       <span class="c-ic">🀄</span>
       <div class="c-nm">中國象棋</div>
       <div class="c-en">Chinese Chess · Xiangqi</div>
-      <div class="c-ds">傳統中國象棋，含完整棋規。支援全盤對戰與半盤教學模式，雙人或AI對局。</div>
-      <div class="c-tg"><span class="tag">🤖 AI對手</span><span class="tag">👫 雙人</span><span class="tag">📚 半盤教學</span></div>
+      <div class="c-ds">傳統中國象棋全規則，楚河漢界、宮格斜線、炮翻山、馬腿。雙人或AI對局。</div>
+      <div class="c-tg">
+        <span class="tag">🤖 AI對手</span>
+        <span class="tag">👫 雙人</span>
+        <span class="tag">完整規則</span>
+      </div>
+      <button class="pbtn">▶ 開始遊戲</button>
+    </a>
+
+    <a class="card card-dark" href="xiangqi.html">
+      <span class="c-ic">🃏</span>
+      <div class="c-nm">暗棋</div>
+      <div class="c-en">Dark Chess · Hidden Piece Chess</div>
+      <div class="c-ds">32枚棋子全部面朝下！翻牌決定顏色，用大吃小，兵卒可吃帥將——刺激反轉！</div>
+      <div class="c-tg">
+        <span class="tag">🤖 AI對手</span>
+        <span class="tag">👫 雙人</span>
+        <span class="tag">🃏 翻牌策略</span>
+        <span class="tag">4×8棋盤</span>
+      </div>
       <button class="pbtn">▶ 開始遊戲</button>
     </a>
   </div>
+
+  <!-- ── 動作遊戲 ── -->
+  <div class="sec" style="margin-top:22px">🏰 動作遊戲</div>
+  <div class="games">
+    <a class="card card-kingdom" href="https://jaychou0309.github.io/kingdom/" target="_blank">
+      <span class="c-ic">🏰</span>
+      <div class="c-nm">守城</div>
+      <div class="c-en">Castle Defense · Kingdom Siege</div>
+      <div class="c-ds">你的城堡在正中央，敵人從四面八方不停湧來！採集木材和肉，招募劍士、弓手、騎士、法師，守住城堡！</div>
+      <div class="c-tg">
+        <span class="tag">⚔️ 即時戰鬥</span>
+        <span class="tag">🏹 4種兵種</span>
+        <span class="tag">👹 4種怪物</span>
+        <span class="tag">🌲 資源採集</span>
+      </div>
+      <button class="pbtn">▶ 開始守城！</button>
+    </a>
+  </div>
 </div>
+
 <script>
 const s=document.getElementById('stars');
-for(let i=0;i<50;i++){const d=document.createElement('div');d.className='s';d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${1+Math.random()*2.5}px;height:${1+Math.random()*2.5}px;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*2}s`;s.appendChild(d);}
+for(let i=0;i<50;i++){
+  const d=document.createElement('div');d.className='s';
+  d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${1+Math.random()*2.5}px;height:${1+Math.random()*2.5}px;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*2}s`;
+  s.appendChild(d);
+}
 </script>
 </body>
 </html>
