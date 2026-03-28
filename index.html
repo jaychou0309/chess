@@ -2,347 +2,275 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="魔法象棋">
-<title>🦄 魔法象棋王國</title>
+<meta name="apple-mobile-web-app-title" content="經典象棋">
+<title>♟ 經典西洋象棋</title>
 <style>
-* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
-body { margin:0; padding:0; min-height:100vh; background:linear-gradient(160deg,#fce4ec 0%,#ede7f6 50%,#e8eaf6 100%); font-family:-apple-system,'PingFang TC','Hiragino Sans GB',sans-serif; overflow:hidden; }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden}
+body{background:#1a0e06;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:-apple-system,'PingFang TC','Hiragino Sans GB',sans-serif}
 
 /* SCREENS */
-.screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity .35s; }
-.screen.hidden { opacity:0; pointer-events:none; }
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .35s}
+.screen.hide{opacity:0;pointer-events:none}
 
 /* MENU */
-.menu-emoji { font-size:clamp(3rem,10vw,4.5rem); animation:float 3s ease-in-out infinite; }
+#menu{background:radial-gradient(ellipse at 50% 30%,#3d1f00 0%,#1a0e06 70%)}
+.m-logo{font-size:clamp(3.5rem,12vw,5.5rem);animation:float 3s ease-in-out infinite;margin-bottom:4px}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.menu-title { font-size:clamp(1.7rem,6vw,2.4rem); font-weight:900; color:#6a1b9a; text-align:center; margin:4px 0; text-shadow:2px 3px 0 rgba(255,255,255,.6); }
-.menu-sub { font-size:clamp(.85rem,2.8vw,1rem); color:#9c27b0; margin:0 0 20px; }
-.mode-label { font-size:clamp(.8rem,2.5vw,.95rem); color:#6a1b9a; font-weight:bold; margin:12px 0 6px; }
-.diff-row { display:flex; gap:10px; margin-bottom:10px; }
-.diff-btn { padding:10px 22px; border:2px solid #9c27b0; border-radius:30px; font-size:clamp(.85rem,2.8vw,1rem); font-weight:bold; font-family:inherit; cursor:pointer; transition:all .15s; background:transparent; color:#6a1b9a; }
-.diff-btn.active,.diff-btn:active { background:#7b1fa2; color:white; border-color:#7b1fa2; transform:scale(.96); }
-.mbtn { display:flex; align-items:center; justify-content:center; gap:8px; width:min(280px,78vw); padding:15px 22px; margin:7px; font-size:clamp(1rem,3.8vw,1.25rem); font-weight:bold; font-family:inherit; border:none; border-radius:50px; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.18); transition:transform .12s,box-shadow .12s; }
-.mbtn:active { transform:scale(.93); box-shadow:0 2px 8px rgba(0,0,0,.15); }
-.mbtn-play { background:linear-gradient(135deg,#ab47bc,#6a1b9a); color:white; }
-.mbtn-ai   { background:linear-gradient(135deg,#1565c0,#0d47a1); color:white; }
-.mbtn-learn{ background:linear-gradient(135deg,#f48fb1,#c2185b); color:white; }
+.m-title{font-size:clamp(1.8rem,6vw,2.8rem);font-weight:900;color:#d4a030;text-align:center;text-shadow:0 0 20px rgba(212,160,48,.5),2px 3px 0 rgba(0,0,0,.6);margin:0 0 4px}
+.m-sub{font-size:clamp(.82rem,2.5vw,1rem);color:#a0784a;margin:0 0 28px}
+.diff-row{display:flex;gap:10px;margin-bottom:12px}
+.diff-btn{padding:9px 22px;border:2px solid #d4a030;border-radius:30px;font-size:clamp(.82rem,2.5vw,.95rem);font-weight:bold;font-family:inherit;cursor:pointer;background:transparent;color:#d4a030;transition:all .15s}
+.diff-btn.sel,.diff-btn:active{background:#d4a030;color:#1a0e06;transform:scale(.96)}
+.mbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:min(280px,78vw);padding:15px 22px;margin:7px;font-size:clamp(1rem,3.5vw,1.2rem);font-weight:bold;font-family:inherit;border:none;border-radius:50px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.5);transition:transform .12s,box-shadow .12s}
+.mbtn:active{transform:scale(.93);box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.mbtn-play{background:linear-gradient(135deg,#d4a030,#a0600a);color:#fff8e8}
+.mbtn-ai{background:linear-gradient(135deg,#1565c0,#0d47a1);color:white}
+.mbtn-learn{background:linear-gradient(135deg,#6a1b9a,#4a148c);color:white}
 
 /* GAME */
-#game { padding:8px; gap:5px; justify-content:center; }
-:root { --bs:min(min(96vw,calc(100vh - 210px)),550px); --cs:calc(var(--bs)/8); }
-.pinfo { width:var(--bs); padding:7px 14px; display:flex; align-items:center; justify-content:space-between; border-radius:24px; font-size:clamp(.75rem,2.3vw,.95rem); font-weight:bold; transition:box-shadow .3s; }
-.pinfo-b { background:linear-gradient(135deg,#4a148c,#7b1fa2); color:white; }
-.pinfo-w { background:linear-gradient(135deg,#fce4ec,#f8bbd0); color:#6a1b9a; }
-.pinfo.active { box-shadow:0 0 0 3px #ffd600,0 0 16px rgba(255,214,0,.5); }
-#board { width:var(--bs); height:var(--bs); display:grid; grid-template-columns:repeat(8,1fr); border-radius:10px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.28); border:4px solid #6a1b9a; flex-shrink:0; }
-.cell { width:var(--cs); height:var(--cs); display:flex; align-items:center; justify-content:center; font-size:calc(var(--cs)*.62); cursor:pointer; position:relative; transition:background .1s; -webkit-touch-callout:none; }
-.cl{background:#f3e5f5}.cd{background:#ce93d8}
-.sel{background:rgba(255,215,0,.75)!important}
-.lm{background:rgba(255,235,59,.38)!important}
-.chk{background:rgba(244,67,54,.58)!important;animation:redpulse .7s ease infinite alternate}
-@keyframes redpulse{from{background:rgba(244,67,54,.58)!important}to{background:rgba(244,67,54,.82)!important}}
-.cell.vm::after{content:'';position:absolute;width:33%;height:33%;border-radius:50%;background:rgba(56,142,60,.55);pointer-events:none}
-.cell.vc::after{content:'';position:absolute;inset:3px;border-radius:50%;border:4px solid rgba(56,142,60,.75);pointer-events:none}
-.piece{line-height:1;pointer-events:none;filter:drop-shadow(1px 2px 3px rgba(0,0,0,.22))}
-#status { width:var(--bs); padding:7px 18px; background:rgba(255,255,255,.88); border-radius:24px; font-size:clamp(.8rem,2.5vw,.98rem); font-weight:bold; color:#6a1b9a; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,.1); transition:background .3s,color .3s; flex-shrink:0; }
-.gbtns{display:flex;gap:8px}
-.gbtn { padding:8px 13px; border:none; border-radius:20px; font-size:clamp(.7rem,2.2vw,.86rem); font-weight:bold; font-family:inherit; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,.12); transition:transform .1s; }
+#game{background:#1a0e06;padding:6px;gap:4px}
+.pinfo{display:flex;align-items:center;justify-content:space-between;border-radius:20px;padding:6px 14px;font-weight:bold}
+:root{--bz:min(min(96vw,calc(100vh - 200px)),560px)}
+.pinfo{width:var(--bz);font-size:clamp(.75rem,2.2vw,.92rem)}
+.pinfo-b{background:rgba(30,20,50,.85);color:#c8a0f0;border:1px solid #4a148c}
+.pinfo-w{background:rgba(80,50,10,.85);color:#f5dca0;border:1px solid #8b4513}
+.pinfo.turn{box-shadow:0 0 0 2px #d4a030,0 0 14px rgba(212,160,48,.4)}
+#board-wrap{position:relative;width:var(--bz);height:var(--bz);flex-shrink:0}
+#board-canvas{position:absolute;top:0;left:0;cursor:pointer;-webkit-touch-callout:none}
+#status{width:var(--bz);padding:6px 18px;border-radius:20px;font-size:clamp(.78rem,2.4vw,.95rem);font-weight:bold;text-align:center;background:rgba(50,30,0,.8);color:#f5dca0;border:1px solid #8b4513;flex-shrink:0}
+.gbtns{display:flex;gap:7px}
+.gbtn{padding:7px 13px;border:none;border-radius:18px;font-size:clamp(.7rem,2.1vw,.84rem);font-weight:bold;font-family:inherit;cursor:pointer;transition:transform .1s}
 .gbtn:active{transform:scale(.92)}
-.gbtn-undo{background:#ffd600;color:#333}.gbtn-new{background:#4caf50;color:white}.gbtn-home{background:#e0e0e0;color:#333}
+.gbtn-undo{background:#d4a030;color:#1a0e06}.gbtn-new{background:#2e7d32;color:white}.gbtn-home{background:rgba(255,255,255,.15);color:#f5dca0}
 
 /* AI THINKING */
-#ai-thinking { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(74,20,140,.9); color:white; padding:14px 28px; border-radius:30px; font-size:clamp(1rem,4vw,1.3rem); font-weight:bold; display:none; z-index:150; box-shadow:0 8px 30px rgba(0,0,0,.4); }
-.thinking-dots::after { content:''; animation:dots 1.2s steps(4,end) infinite; }
-@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}
+#ai-think{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,71,161,.92);color:white;padding:12px 26px;border-radius:28px;font-size:clamp(.95rem,3.5vw,1.2rem);font-weight:bold;display:none;z-index:150;box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.dots::after{content:'';animation:dot 1.2s steps(4,end) infinite}
+@keyframes dot{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}
 
 /* OVERLAYS */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:200}
-.overlay.hidden{display:none}
-.dialog{background:white;border-radius:28px;padding:26px 28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.38);max-width:min(340px,88vw)}
-.dialog h3{color:#6a1b9a;margin:0 0 16px;font-size:clamp(.95rem,3.8vw,1.2rem);line-height:1.4}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:200}
+.overlay.hide{display:none}
+.dialog{background:linear-gradient(160deg,#2d1a08,#1a0e02);border:2px solid #d4a030;border-radius:24px;padding:24px 28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);max-width:min(340px,88vw);color:#f5dca0}
+.dialog h3{color:#d4a030;margin:0 0 16px;font-size:clamp(.95rem,3.5vw,1.2rem);line-height:1.4}
 .promo-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.pbtn{font-size:2.4rem;background:#f3e5f5;border:3px solid #9c27b0;border-radius:16px;padding:7px 11px;cursor:pointer;line-height:1;transition:transform .1s}
+.pbtn{font-size:2rem;background:rgba(212,160,48,.15);border:2px solid #d4a030;border-radius:12px;padding:8px 12px;cursor:pointer;color:#f5dca0;transition:transform .1s}
 .pbtn:active{transform:scale(.88)}
-.pbtn span{display:block;font-size:.68rem;color:#9c27b0;font-weight:bold;margin-top:3px}
+.pbtn span{display:block;font-size:.68rem;color:#d4a030;font-weight:bold;margin-top:3px}
 .go-emoji{font-size:3.5rem;animation:bounce .5s ease infinite alternate}
 @keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-14px)}}
-.go-title{font-size:clamp(1.4rem,5.5vw,1.9rem);color:#6a1b9a;font-weight:900;margin:8px 0 5px}
-.go-sub{color:#666;margin-bottom:18px;font-size:clamp(.82rem,2.8vw,.98rem);line-height:1.5}
-.go-btns{display:flex;flex-direction:column;gap:9px}
+.go-title{font-size:clamp(1.4rem,5vw,1.9rem);color:#d4a030;font-weight:900;margin:8px 0 5px}
+.go-sub{color:#c8a8a0;margin-bottom:18px;font-size:clamp(.8rem,2.6vw,.95rem);line-height:1.5}
+.go-btns{display:flex;flex-direction:column;gap:8px}
 .go-btns .mbtn{width:100%;margin:0}
 
 /* TUTORIAL */
-#tutorial{padding:0;align-items:stretch}
-.tut-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;width:100%;padding:70px 15px 50px}
-.tut-title{font-size:clamp(1.4rem,5.5vw,1.8rem);text-align:center;color:#6a1b9a;font-weight:900;margin-bottom:12px}
-.back-btn{position:fixed;top:16px;left:16px;width:46px;height:46px;border-radius:50%;border:none;background:white;font-size:1.3rem;cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.18);z-index:10;display:flex;align-items:center;justify-content:center}
-.lang-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
-.lang-btn{padding:8px 18px;border:2px solid #9c27b0;border-radius:30px;font-size:clamp(.8rem,2.5vw,.95rem);font-weight:bold;font-family:inherit;cursor:pointer;transition:all .15s;background:transparent;color:#6a1b9a}
-.lang-btn.active{background:#7b1fa2;color:white;border-color:#7b1fa2}
-.sec-hdr{font-size:clamp(.95rem,3.5vw,1.15rem);color:#6a1b9a;font-weight:900;margin:20px 0 9px;padding-bottom:5px;border-bottom:3px solid #ce93d8}
-.piece-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.pcard{background:white;border-radius:18px;padding:13px 10px;box-shadow:0 4px 16px rgba(0,0,0,.07);text-align:center;position:relative}
-.pcard .ico{font-size:clamp(1.9rem,6vw,2.6rem)}
-.pcard .pn{font-size:clamp(.86rem,2.8vw,.98rem);font-weight:bold;color:#6a1b9a;margin:4px 0 1px}
-.pcard .pe{font-size:clamp(.68rem,2vw,.76rem);color:#9c27b0;margin-bottom:4px}
-.pcard .pd{font-size:clamp(.7rem,2.1vw,.8rem);color:#555;line-height:1.5;text-align:left;padding:0 4px}
-.pcard .pm{font-size:clamp(.68rem,2vw,.78rem);color:#e91e8c;font-weight:bold;margin-top:5px}
-.speak-btn{position:absolute;top:8px;right:8px;background:#f3e5f5;border:2px solid #ce93d8;border-radius:50%;width:30px;height:30px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
-.speak-btn:active{background:#ce93d8}
-.rule-card{background:linear-gradient(135deg,#f3e5f5,#e8eaf6);border-radius:18px;padding:13px 15px;margin:9px 0;box-shadow:0 3px 12px rgba(0,0,0,.07);position:relative}
-.rule-card .rt{font-size:clamp(.92rem,3.2vw,1.08rem);font-weight:bold;color:#6a1b9a;margin-bottom:6px;padding-right:36px}
-.rule-card .rd{font-size:clamp(.76rem,2.5vw,.88rem);color:#444;line-height:1.7}
-.rule-card .speak-btn{top:10px;right:10px}
-.tip-card{background:white;border-radius:14px;padding:11px 13px;margin:7px 0;box-shadow:0 3px 10px rgba(0,0,0,.07);display:flex;gap:9px;align-items:flex-start}
-.tip-card .ti{font-size:1.6rem;flex-shrink:0}
-.tip-card .tt{font-size:clamp(.78rem,2.6vw,.88rem);color:#444;line-height:1.5}
-.tip-card .ttl{font-weight:bold;color:#6a1b9a;margin-bottom:2px}
-.knight-diagram{display:grid;grid-template-columns:repeat(5,30px);gap:2px;margin:10px auto;width:fit-content}
-.kd{width:30px;height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:1rem}
-.kd-l{background:#f3e5f5}.kd-d{background:#ce93d8}.kd-p{background:rgba(255,215,0,.75)}.kd-m{background:rgba(76,175,80,.5)}
+#tutorial{background:#1a0e06}
+.tut-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;width:100%;padding:68px 14px 44px;max-width:700px}
+.tut-title{font-size:clamp(1.4rem,5vw,1.8rem);font-weight:900;color:#d4a030;text-align:center;margin-bottom:12px}
+.back-btn{position:fixed;top:14px;left:14px;width:44px;height:44px;border-radius:50%;border:none;background:rgba(212,160,48,.2);color:#d4a030;font-size:1.3rem;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.4);z-index:10;display:flex;align-items:center;justify-content:center}
+.lang-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
+.lang-btn{padding:7px 16px;border:2px solid #d4a030;border-radius:28px;font-size:clamp(.78rem,2.3vw,.9rem);font-weight:bold;font-family:inherit;cursor:pointer;background:transparent;color:#d4a030;transition:all .15s}
+.lang-btn.sel{background:#d4a030;color:#1a0e06}
+.sec{font-size:clamp(.92rem,3vw,1.08rem);color:#d4a030;font-weight:900;margin:18px 0 8px;padding-bottom:5px;border-bottom:2px solid #3d2000}
+.pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.pc{background:rgba(60,30,5,.7);border:1px solid #5c3010;border-radius:16px;padding:12px 10px;text-align:center;position:relative}
+.pc .pi{font-size:clamp(1.6rem,5vw,2.2rem);color:#f5dca0}
+.pc .pn{font-size:clamp(.84rem,2.7vw,.96rem);font-weight:bold;color:#d4a030;margin:4px 0 1px}
+.pc .pd{font-size:clamp(.68rem,2vw,.78rem);color:#c8a060;line-height:1.5;text-align:left;padding:0 2px}
+.pc .pm{font-size:clamp(.66rem,1.9vw,.76rem);color:#a0784a;font-weight:bold;margin-top:4px}
+.spk{position:absolute;top:7px;right:7px;width:28px;height:28px;border-radius:50%;background:rgba(212,160,48,.2);border:1px solid #d4a030;color:#d4a030;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.rc{background:rgba(60,30,5,.7);border:1px solid #5c3010;border-radius:16px;padding:12px 14px;margin:8px 0;position:relative}
+.rc .rt{font-size:clamp(.9rem,3vw,1.05rem);font-weight:bold;color:#d4a030;margin-bottom:5px;padding-right:32px}
+.rc .rd{font-size:clamp(.74rem,2.3vw,.86rem);color:#c8a060;line-height:1.7}
+.rc .spk{top:9px;right:9px}
+.tip{background:rgba(60,30,5,.7);border:1px solid #5c3010;border-radius:12px;padding:10px 12px;margin:6px 0;display:flex;gap:9px;align-items:flex-start}
+.tip .ti{font-size:1.5rem;flex-shrink:0}
+.tip .tt{font-size:clamp(.76rem,2.4vw,.86rem);color:#c8a060;line-height:1.5}
+.tip .tl{font-weight:bold;color:#d4a030;margin-bottom:2px}
+.kd-grid{display:grid;grid-template-columns:repeat(5,28px);gap:2px;margin:10px auto;width:fit-content}
+.kd{width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.kd-l{background:#f0d9b5}.kd-d{background:#b58863}.kd-p{background:rgba(255,215,0,.7)}.kd-m{background:rgba(76,175,80,.5)}
 </style>
 </head>
 <body>
 
-<!-- ======== MENU ======== -->
+<!-- ═══ MENU ═══ -->
 <div class="screen" id="menu">
-  <div class="menu-emoji">🦄🏰🐉</div>
-  <h1 class="menu-title">魔法象棋王國</h1>
-  <p class="menu-sub">✨ Magic Chess Kingdom ✨</p>
-
-  <div class="mode-label">⚡ 選擇難度 / Difficulty</div>
+  <div class="m-logo">♟</div>
+  <h1 class="m-title">經典西洋象棋</h1>
+  <p class="m-sub">Classic Chess · 精美木質棋盤</p>
+  <div style="color:#a0784a;font-size:clamp(.8rem,2.3vw,.9rem);margin-bottom:10px">⚡ AI 難度 / Difficulty</div>
   <div class="diff-row">
-    <button class="diff-btn active" id="diff-easy" onclick="setDiff('easy')">🌟 簡單 Easy</button>
-    <button class="diff-btn" id="diff-hard" onclick="setDiff('hard')">🔥 困難 Hard</button>
+    <button class="diff-btn sel" id="d-easy" onclick="setDiff('easy')">🌟 簡單 Easy</button>
+    <button class="diff-btn" id="d-hard" onclick="setDiff('hard')">🔥 困難 Hard</button>
   </div>
-
-  <button class="mbtn mbtn-play" onclick="startGame('2p')">👫 雙人對戰<br><small style="font-size:.7em;opacity:.85">Two Players</small></button>
-  <button class="mbtn mbtn-ai"   onclick="startGame('ai')">🤖 對抗電腦 AI<br><small style="font-size:.7em;opacity:.85">Play vs Computer</small></button>
-  <button class="mbtn mbtn-learn" onclick="showTutorial()">📚 學習規則 Learn</button>
+  <button class="mbtn mbtn-play" onclick="startGame('2p')">👫 雙人對戰</button>
+  <button class="mbtn mbtn-ai"   onclick="startGame('ai')">🤖 對抗電腦 AI</button>
+  <button class="mbtn mbtn-learn" onclick="showTut()">📚 學習規則</button>
 </div>
 
-<!-- ======== GAME ======== -->
-<div class="screen hidden" id="game">
-  <div class="pinfo pinfo-b" id="pinfo-b">
-    <span id="b-label">🐉 紫色王國</span>
-    <span id="cap-w" style="letter-spacing:-1px;font-size:.76em;flex:1;text-align:center"></span>
-    <span id="turn-b" style="font-size:.82em"></span>
+<!-- ═══ GAME ═══ -->
+<div class="screen hide" id="game">
+  <div class="pinfo pinfo-b" id="pi-b">
+    <span id="lbl-b">♟ 黑方</span>
+    <span id="cap-w" style="letter-spacing:-1px;font-size:.8em;flex:1;text-align:center;color:#d4a030"></span>
+    <span id="trn-b" style="font-size:.82em"></span>
   </div>
-  <div id="board"></div>
-  <div id="status">🦄 粉色王國 輪到你了！</div>
-  <div class="pinfo pinfo-w" id="pinfo-w">
-    <span>🦄 粉色王國</span>
-    <span id="cap-b" style="letter-spacing:-1px;font-size:.76em;flex:1;text-align:center"></span>
-    <span id="turn-w" style="font-size:.82em">⭐ 你的回合</span>
+  <div id="board-wrap"><canvas id="board-canvas"></canvas></div>
+  <div id="status">♔ 白方 輪到你了！</div>
+  <div class="pinfo pinfo-w" id="pi-w">
+    <span>♔ 白方</span>
+    <span id="cap-b" style="letter-spacing:-1px;font-size:.8em;flex:1;text-align:center;color:#d4a030"></span>
+    <span id="trn-w" style="font-size:.82em">▶ 你的回合</span>
   </div>
   <div class="gbtns">
-    <button class="gbtn gbtn-undo" onclick="undoMove()">↩️ 悔棋</button>
-    <button class="gbtn gbtn-new"  onclick="newGame()">🔄 新遊戲</button>
-    <button class="gbtn gbtn-home" onclick="showMenu()">🏠 選單</button>
+    <button class="gbtn gbtn-undo" onclick="undoMove()">↩ 悔棋</button>
+    <button class="gbtn gbtn-new"  onclick="newGame()">↺ 新局</button>
+    <button class="gbtn gbtn-home" onclick="showMenu()">⌂ 選單</button>
   </div>
 </div>
 
-<!-- AI thinking indicator -->
-<div id="ai-thinking">🤖 電腦思考中<span class="thinking-dots"></span></div>
+<div id="ai-think">🤖 AI 思考中<span class="dots"></span></div>
 
-<!-- ======== TUTORIAL ======== -->
-<div class="screen hidden" id="tutorial">
+<!-- ═══ TUTORIAL ═══ -->
+<div class="screen hide" id="tutorial">
   <button class="back-btn" onclick="showMenu()">←</button>
   <div class="tut-scroll">
-    <div class="tut-title">📚 學習象棋 Learn Chess</div>
-
+    <div class="tut-title">📚 學習西洋象棋</div>
     <div class="lang-bar">
-      <span style="font-size:.9rem;color:#666">🔊 語音 / Voice:</span>
-      <button class="lang-btn active" id="lang-zh" onclick="setLang('zh')">🇹🇼 中文</button>
-      <button class="lang-btn" id="lang-en" onclick="setLang('en')">🇺🇸 English</button>
+      <span style="font-size:.85rem;color:#a0784a">🔊 語音：</span>
+      <button class="lang-btn sel" id="lzh" onclick="setLang('zh')">🇹🇼 中文</button>
+      <button class="lang-btn" id="len" onclick="setLang('en')">🇺🇸 English</button>
     </div>
 
-    <div class="rule-card">
-      <div class="rt">🌟 什麼是西洋象棋？ What is Chess?</div>
-      <div class="rd">
-        <b>中：</b>兩人智力遊戲，🦄粉色王國 對戰 🐉紫色王國，每人16個棋子，目標是困住對方的國王！<br>
-        <b>En:</b> A 2-player game! 🦄Pink Kingdom vs 🐉Purple Kingdom. Each player has 16 pieces. Trap the enemy King to win! 🏆
-      </div>
-      <button class="speak-btn" onclick="speakCard(this)" data-zh="西洋象棋是兩個人的智力遊戲。粉色王國對戰紫色王國。每人有十六個棋子。目標是困住對方的國王！" data-en="Chess is a game for two players. The Pink Kingdom battles the Purple Kingdom. Each player has 16 pieces. Your goal is to trap the enemy King!">🔊</button>
+    <div class="rc">
+      <div class="rt">🌟 什麼是西洋象棋？What is Chess?</div>
+      <div class="rd"><b>中：</b>兩人智力對弈，白方對陣黑方，各有16個棋子，目標是將死對方的國王！<br><b>En:</b> Chess is a 2-player strategy game. White vs Black, 16 pieces each. Trap the enemy King to win!</div>
+      <button class="spk" onclick="spk(this)" data-zh="西洋象棋是兩個人的智力遊戲。白方對戰黑方，每人有十六個棋子。目標是困住對方的國王！" data-en="Chess is a strategy game for two players — White versus Black. Each player has 16 pieces. Your goal is to trap the enemy King!">🔊</button>
     </div>
 
-    <div class="sec-hdr">🎭 棋子介紹 Meet the Pieces</div>
-    <div class="piece-grid">
-
-      <div class="pcard">
-        <div class="ico">👸🤴</div>
-        <div class="pn">國王 King</div>
-        <div class="pe">最重要！Most Important!</div>
-        <div class="pd">
-          每次只能移動<b>一格</b>，朝任何方向。<br>
-          <i>Moves 1 square, any direction.</i>
-        </div>
-        <div class="pm">👑 任意方向×1格</div>
-        <button class="speak-btn" onclick="speakCard(this)" data-zh="國王每次只能移動一格，朝任何方向都可以。必須好好保護國王，如果他被困住，你就輸了！" data-en="The King moves one square in any direction. You MUST protect the King! If he gets trapped, you lose the game!">🔊</button>
+    <div class="sec">🎭 棋子介紹</div>
+    <div class="pgrid">
+      <div class="pc">
+        <div class="pi">♔♚</div><div class="pn">國王 King</div><div class="pd">每次移動<b>一格</b>，任意方向。最重要的棋子，被困就輸了！<br><i>Moves 1 square, any direction.</i></div><div class="pm">👑 任意×1格</div>
+        <button class="spk" onclick="spk(this)" data-zh="國王每次只能移動一格，朝任何方向。必須好好保護國王，被困住就輸了！" data-en="The King moves one square in any direction. Protect him! If he gets trapped, you lose!">🔊</button>
       </div>
-
-      <div class="pcard">
-        <div class="ico">🦄🐉</div>
-        <div class="pn">王后 Queen</div>
-        <div class="pe">最厲害！Most Powerful!</div>
-        <div class="pd">
-          朝<b>任何方向</b>走<b>任意距離</b>！<br>
-          <i>Any direction, any distance!</i>
-        </div>
-        <div class="pm">⭐ 任意方向，任意遠</div>
-        <button class="speak-btn" onclick="speakCard(this)" data-zh="王后是最強的棋子！她可以朝任何方向走，而且可以走很遠。橫的、直的、斜的都可以！" data-en="The Queen is the most powerful piece! She can move in ANY direction — up, down, sideways, or diagonal — as many squares as she wants!">🔊</button>
+      <div class="pc">
+        <div class="pi">♕♛</div><div class="pn">王后 Queen</div><div class="pd">朝<b>任何方向</b>走<b>任意距離</b>！最強的棋子。<br><i>Any direction, any distance — most powerful!</i></div><div class="pm">⭐ 任意方向，任意遠</div>
+        <button class="spk" onclick="spk(this)" data-zh="王后是最強的棋子！可以朝任何方向走，橫的直的斜的都可以，而且可以走很遠。" data-en="The Queen is the most powerful piece! She moves any direction — left, right, up, down, diagonal — as far as she wants!">🔊</button>
       </div>
-
-      <div class="pcard">
-        <div class="ico">🏰🏯</div>
-        <div class="pn">城堡 Rook</div>
-        <div class="pe">強力守衛！Strong Guard!</div>
-        <div class="pd">
-          只能<b>橫著或直著</b>走，可以走很遠。<br>
-          <i>Moves in straight lines only.</i>
-        </div>
-        <div class="pm">➕ 橫直方向，任意遠</div>
-        <button class="speak-btn" onclick="speakCard(this)" data-zh="城堡只能橫著走或直著走，不能斜著走。但是可以走很遠！很適合攻擊對方。" data-en="The Rook moves in straight lines — left, right, up, or down. It cannot move diagonally. But it can go very far in one move!">🔊</button>
+      <div class="pc">
+        <div class="pi">♖♜</div><div class="pn">城堡 Rook</div><div class="pd">只能<b>橫著或直著</b>走，可以走很遠。<br><i>Moves in straight lines only.</i></div><div class="pm">➕ 橫直任意遠</div>
+        <button class="spk" onclick="spk(this)" data-zh="城堡只能橫著走或直著走，不能斜著走，但可以走很遠！" data-en="The Rook moves in straight lines — left, right, up, or down. No diagonal. But it can go very far!">🔊</button>
       </div>
-
-      <div class="pcard">
-        <div class="ico">🧚🦋</div>
-        <div class="pn">主教 Bishop</div>
-        <div class="pe">神奇精靈！Magic Fairy!</div>
-        <div class="pd">
-          只能<b>斜著</b>走，可以走很遠。一直在同一顏色的格子。<br>
-          <i>Moves diagonally only. Stays on same color!</i>
-        </div>
-        <div class="pm">✖️ 斜線方向，任意遠</div>
-        <button class="speak-btn" onclick="speakCard(this)" data-zh="主教只能斜著走，可以走很遠。有一個有趣的事：主教永遠待在同一個顏色的格子上！" data-en="The Bishop moves diagonally — and can go very far! Here's something cool: the Bishop always stays on the SAME COLOR squares the whole game!">🔊</button>
+      <div class="pc">
+        <div class="pi">♗♝</div><div class="pn">主教 Bishop</div><div class="pd">只能<b>斜著</b>走，可以走很遠。永遠在同一顏色格！<br><i>Diagonal only. Always same color square.</i></div><div class="pm">✖ 斜線任意遠</div>
+        <button class="spk" onclick="spk(this)" data-zh="主教只能斜著走，可以走很遠。它永遠待在同一個顏色的格子上！" data-en="The Bishop moves diagonally and can go very far. It always stays on the same color square!">🔊</button>
       </div>
-
-      <div class="pcard">
-        <div class="ico">🐴🦊</div>
-        <div class="pn">騎士 Knight</div>
-        <div class="pe">最特別！Most Unique!</div>
-        <div class="pd">
-          走<b>L形</b>：先2格再轉1格。可以<b>跳過</b>其他棋子！<br>
-          <i>L-shape jump! Can leap over pieces!</i>
-        </div>
-        <div class="pm">🐎 L形跳躍（2+1格）</div>
-        <button class="speak-btn" onclick="speakCard(this)" data-zh="騎士的走法很特別！它走L形：先走兩格，再轉彎走一格。最厲害的是，騎士可以跳過其他棋子！" data-en="The Knight moves in an L-shape — two squares one way, then one square sideways. The coolest part? The Knight can JUMP over other pieces! No other piece can do that!">🔊</button>
+      <div class="pc">
+        <div class="pi">♘♞</div><div class="pn">騎士 Knight</div><div class="pd">走<b>L形</b>：2格再轉1格。能<b>跳過</b>其他棋子！<br><i>L-shape move! Can jump over pieces!</i></div><div class="pm">🐴 L形跳躍</div>
+        <button class="spk" onclick="spk(this)" data-zh="騎士走L形：先走兩格，再轉彎走一格。最特別的是，騎士可以跳過其他棋子！" data-en="The Knight moves in an L-shape — two squares one way, then one square sideways. It can jump over other pieces! No other piece can do that!">🔊</button>
       </div>
-
-      <div class="pcard">
-        <div class="ico">🐣🌸</div>
-        <div class="pn">士兵 Pawn</div>
-        <div class="pe">勇敢小兵！Brave Soldier!</div>
-        <div class="pd">
-          只能<b>向前</b>走，第一步可走2格，斜著<b>吃子</b>。走到底可<b>升級</b>！<br>
-          <i>Moves forward. Captures diagonally. Promotes at the end!</i>
-        </div>
-        <div class="pm">⬆️ 向前走，斜線吃子</div>
-        <button class="speak-btn" onclick="speakCard(this)" data-zh="士兵只能向前走，每次一格。但是第一次可以走兩格。士兵要斜著吃對方的棋子。最厲害的是，士兵走到棋盤最遠的那排，可以升級變成任何棋子！" data-en="Pawns move forward one square at a time. Their FIRST move can be two squares. They capture diagonally. The best part — if a pawn reaches the other end of the board, it can be promoted to ANY piece, usually a Queen!">🔊</button>
+      <div class="pc">
+        <div class="pi">♙♟</div><div class="pn">士兵 Pawn</div><div class="pd">向前走1格（首步可2格），斜著吃子，到底可<b>升級</b>！<br><i>Forward 1, captures diagonal, promotes at end!</i></div><div class="pm">⬆ 向前，斜吃，升級</div>
+        <button class="spk" onclick="spk(this)" data-zh="士兵只能向前走，每次一格，第一步可以走兩格。要斜著吃對方棋子。走到最遠的那排可以升級成任何棋子！" data-en="The Pawn moves forward one square, or two on its first move. It captures diagonally. Reach the far end and it can promote to any piece — usually a Queen!">🔊</button>
       </div>
-
     </div>
 
-    <!-- Knight diagram -->
-    <div class="rule-card">
-      <div class="rt">🐴 騎士的 L 形移動 / Knight's L-Shape</div>
-      <div class="rd">⭐ = 騎士 Knight &nbsp;|&nbsp; 🟢 = 可以去的地方 Can move here</div>
-      <div class="knight-diagram">
+    <div class="rc" style="margin-top:14px">
+      <div class="rt">🐴 騎士的 L 形走法</div>
+      <div class="rd" style="text-align:center">⭐ 是騎士，🟢 是可以跳去的地方：</div>
+      <div class="kd-grid">
         <div class="kd kd-l"></div><div class="kd kd-m">🟢</div><div class="kd kd-l"></div><div class="kd kd-d" style="background:rgba(76,175,80,.5)">🟢</div><div class="kd kd-l"></div>
         <div class="kd kd-m">🟢</div><div class="kd kd-l"></div><div class="kd kd-d"></div><div class="kd kd-l"></div><div class="kd kd-d" style="background:rgba(76,175,80,.5)">🟢</div>
         <div class="kd kd-l"></div><div class="kd kd-d"></div><div class="kd kd-p">⭐</div><div class="kd kd-d"></div><div class="kd kd-l"></div>
         <div class="kd kd-m">🟢</div><div class="kd kd-l"></div><div class="kd kd-d"></div><div class="kd kd-l"></div><div class="kd kd-d" style="background:rgba(76,175,80,.5)">🟢</div>
         <div class="kd kd-l"></div><div class="kd kd-m">🟢</div><div class="kd kd-l"></div><div class="kd kd-d" style="background:rgba(76,175,80,.5)">🟢</div><div class="kd kd-l"></div>
       </div>
-      <button class="speak-btn" onclick="speakCard(this)" data-zh="騎士走L形。先走兩格，然後轉彎走一格。就像這個圖，騎士在中間的星星，綠色的格子就是它可以去的地方。" data-en="The Knight moves in an L-shape. Go two squares in one direction, then one square to the side. Look at the diagram — the star is the Knight, and the green squares are where it can jump to!">🔊</button>
+      <button class="spk" onclick="spk(this)" data-zh="騎士走L形：先走兩格，再轉彎走一格。綠色格子就是騎士可以跳去的地方。" data-en="The Knight moves in an L-shape. Two squares one direction, then one square sideways. The green squares show all the places the Knight can jump to!">🔊</button>
     </div>
 
-    <div class="sec-hdr">⚠️ 重要規則 Important Rules</div>
+    <div class="sec">⚠️ 重要規則</div>
+    <div class="rc"><div class="rt">⚠️ 將軍 Check</div><div class="rd">你的棋子威脅到對方國王，就叫「將軍」！被將軍必須馬上保護國王——移動國王、擋住攻擊、或吃掉攻擊的棋子。國王格子會變<b>紅色</b>！<br><i>When your piece threatens the enemy King, that's Check! The King's square turns red. You MUST protect the King immediately!</i></div><button class="spk" onclick="spk(this)" data-zh="將軍！你的棋子威脅到對方國王時，就叫將軍。被將軍的那方必須立刻保護國王。遊戲中國王格子會變紅色提醒你！" data-en="Check! When your piece threatens the enemy King, that's called Check. The King's square turns red. The player in check MUST protect the King right away!">🔊</button></div>
+    <div class="rc"><div class="rt">🏆 將死 Checkmate = 勝利！</div><div class="rd">國王被將軍且無法逃脫，就是「將死」！被將死的一方輸了。這是你的目標！<br><i>King in Check with no escape = Checkmate! That player loses. This is your goal!</i></div><button class="spk" onclick="spk(this)" data-zh="將死！國王被將軍而且沒有辦法逃脫，就叫將死。被將死的一方輸了！這是你的最終目標！" data-en="Checkmate! The King is in Check and has no way to escape. That player loses! Checkmate is your goal — it ends the game!">🔊</button></div>
+    <div class="rc"><div class="rt">🌟 士兵升級 Pawn Promotion</div><div class="rd">士兵走到最遠一排，可以升級成王后、城堡、主教或騎士。通常選<b>王后</b>最強！<br><i>Pawn reaches the far end → promotes to Queen, Rook, Bishop, or Knight. Queen is best!</i></div><button class="spk" onclick="spk(this)" data-zh="士兵升級！士兵走到棋盤最遠的那一排，就可以升級。通常升級成王后最好，因為王后是最強的棋子！" data-en="Pawn Promotion! When a pawn reaches the far end of the board, it can become any piece. Choose Queen — she's the most powerful piece in the game!">🔊</button></div>
+    <div class="rc"><div class="rt">🏰 王車易位 Castling</div><div class="rd">國王和城堡可以同時移動的特殊規則！兩者都未移動過、中間無棋子才可以用。很好的保護國王方法！<br><i>King and Rook swap — special move when neither has moved and path is clear!</i></div><button class="spk" onclick="spk(this)" data-zh="王車易位！國王和城堡可以同時移動。條件是兩者都還沒移動過，而且之間沒有其他棋子。這是保護國王的好方法！" data-en="Castling! The King and a Rook can move at the same time — but only if neither has moved yet and there are no pieces between them. It's a great way to keep your King safe!">🔊</button></div>
 
-    <div class="rule-card">
-      <div class="rt">⚠️ 將軍 Check</div>
-      <div class="rd">當你的棋子可以吃掉對方國王，就叫「將軍」！被將軍的那方必須馬上保護國王。國王格子會變成<b>紅色</b>！<br><i>When your piece can capture the enemy King next move, that's "Check"! The King's square turns RED. You MUST protect the King immediately!</i></div>
-      <button class="speak-btn" onclick="speakCard(this)" data-zh="將軍！當你的棋子威脅到對方的國王，就叫將軍。被將軍的那方必須馬上採取行動，移動國王、擋住攻擊，或者吃掉攻擊的棋子。國王的格子會變成紅色提醒你！" data-en="Check! When your piece is threatening the enemy King, that's called Check! The King's square turns red to warn you. The player in check MUST do something to protect the King right away — move the King, block the attack, or capture the attacking piece!">🔊</button>
-    </div>
-
-    <div class="rule-card">
-      <div class="rt">🏆 將死 Checkmate = You Win!</div>
-      <div class="rd">被將軍但無論怎麼走都無法逃脫，就叫「將死」！被將死的一方<b>輸了</b>。把對方國王將死是目標！<br><i>If the King is in Check and has NO way to escape — that's Checkmate! The player in Checkmate LOSES. This is your goal!</i></div>
-      <button class="speak-btn" onclick="speakCard(this)" data-zh="將死！如果國王被將軍，而且無論怎麼移動都無法逃脫，就叫將死。被將死的一方就輸了。讓對方的國王將死，就是你的目標！" data-en="Checkmate means the King is in Check, and there's absolutely NO way to escape! When that happens, the game is over — the player whose King is checkmated loses! Your goal is to checkmate the enemy King!">🔊</button>
-    </div>
-
-    <div class="rule-card">
-      <div class="rt">🌟 士兵升級 Pawn Promotion</div>
-      <div class="rd">士兵走到棋盤最遠一排，可以升級成王后、城堡、主教或騎士！通常選<b>王后</b>最強！<br><i>A pawn reaching the far end of the board promotes to Queen, Rook, Bishop, or Knight. Queen is usually the best choice!</i></div>
-      <button class="speak-btn" onclick="speakCard(this)" data-zh="士兵升級！當你的士兵走到棋盤最遠的那一排，就可以升級。你可以選擇變成王后、城堡、主教或騎士。大多數時候，最好選擇升級成王后，因為王后是最強的棋子！" data-en="Pawn Promotion! When your pawn reaches the far end of the board, it upgrades! You can choose Queen, Rook, Bishop, or Knight. Most of the time, choose Queen — she's the most powerful piece and can turn the game around!">🔊</button>
-    </div>
-
-    <div class="rule-card">
-      <div class="rt">🏰 王車易位 Castling</div>
-      <div class="rd">國王和城堡可以同時移動的特殊規則！兩者都沒移動過，且之間沒有其他棋子才可以。可以保護國王！<br><i>A special move — the King and Rook swap! Both must not have moved, with no pieces between them. Great for protecting your King!</i></div>
-      <button class="speak-btn" onclick="speakCard(this)" data-zh="王車易位是一個特殊規則。國王和城堡可以同時移動！條件是：兩者都還沒有移動過，而且它們之間沒有其他棋子。這是保護國王的好方法，讓他躲到安全的角落！" data-en="Castling is a special move where the King and a Rook move at the same time! To castle, neither piece can have moved before, and there must be no pieces between them. It's a great way to keep your King safe in a corner!">🔊</button>
-    </div>
-
-    <div class="sec-hdr">💡 初學者技巧 Beginner Tips</div>
-    <div class="tip-card"><div class="ti">🎯</div><div class="tt"><div class="ttl">控制中央！Control the Center!</div>中文：把棋子移到棋盤中間，可以攻擊更多地方。<br><i>Move pieces toward the middle of the board. From there, you can reach more squares!</i></div></div>
-    <div class="tip-card"><div class="ti">👑</div><div class="tt"><div class="ttl">保護國王！Protect Your King!</div>中文：盡早讓國王躲到安全角落，用王車易位。<br><i>Castle early to put your King in a safe corner. A safe King is a happy King!</i></div></div>
-    <div class="tip-card"><div class="ti">🤔</div><div class="tt"><div class="ttl">移棋前先想想！Think Before You Move!</div>中文：走棋之前先問：我的棋子會被吃嗎？<br><i>Before moving, ask yourself: "Can my piece be captured?" Always look for danger!</i></div></div>
-    <div class="tip-card"><div class="ti">🐣</div><div class="tt"><div class="ttl">讓士兵升級！Promote Your Pawns!</div>中文：把士兵推向對方陣地，走到底變王后！<br><i>Push your pawns forward! If you can make a pawn into a Queen, you're in great shape!</i></div></div>
-    <div class="tip-card"><div class="ti">😊</div><div class="tt"><div class="ttl">多練習！Keep Practicing!</div>中文：不要怕輸，每次輸都是學習！<br><i>Don't be afraid to lose! Every game teaches you something new. Keep playing!</i></div></div>
-
-    <div style="text-align:center;margin-top:24px;padding-bottom:8px">
-      <button class="mbtn mbtn-play" onclick="startGame('ai')" style="margin:auto">🤖 對戰電腦 Play vs AI!</button>
-    </div>
+    <div class="sec">💡 技巧</div>
+    <div class="tip"><div class="ti">🎯</div><div class="tt"><div class="tl">控制中央 Control Center</div>把棋子移到棋盤中間，攻擊範圍更大。<br><i>Pieces in the center control more squares!</i></div></div>
+    <div class="tip"><div class="ti">👑</div><div class="tt"><div class="tl">保護國王 Protect Your King</div>盡早王車易位，讓國王躲到角落。<br><i>Castle early — a safe King wins games!</i></div></div>
+    <div class="tip"><div class="ti">🤔</div><div class="tt"><div class="tl">走前想清楚 Think First</div>走棋前問：我的棋子會被吃嗎？<br><i>Before moving: "Can my piece be captured?"</i></div></div>
+    <div class="tip"><div class="ti">😊</div><div class="tt"><div class="tl">多練習 Practice!</div>輸了沒關係，每局都有收穫！<br><i>Every game teaches you something new!</i></div></div>
+    <div style="text-align:center;margin-top:20px"><button class="mbtn mbtn-ai" onclick="startGame('ai')" style="margin:auto">🤖 對戰 AI！</button></div>
   </div>
 </div>
 
 <!-- PROMOTION -->
-<div class="overlay hidden" id="promo-overlay">
+<div class="overlay hide" id="promo-ov">
   <div class="dialog">
-    <h3>🎉 士兵升級！Pawn Promoted!<br>選擇新棋子 Choose your piece:</h3>
-    <div class="promo-row" id="promo-choices"></div>
+    <h3>♟ 士兵升級！選擇新棋子：</h3>
+    <div class="promo-row" id="promo-ch"></div>
   </div>
 </div>
 
 <!-- GAME OVER -->
-<div class="overlay hidden" id="go-overlay">
+<div class="overlay hide" id="go-ov">
   <div class="dialog">
-    <div class="go-emoji" id="go-emoji">🏆</div>
-    <div class="go-title" id="go-title"></div>
-    <div class="go-sub"   id="go-sub"></div>
+    <div class="go-emoji" id="go-e">♛</div>
+    <div class="go-title" id="go-t"></div>
+    <div class="go-sub"   id="go-s"></div>
     <div class="go-btns">
-      <button class="mbtn mbtn-play"  onclick="newGame();closeGO()">🔄 再玩 Play Again</button>
-      <button class="mbtn mbtn-learn" onclick="showMenu();closeGO()">🏠 選單 Menu</button>
+      <button class="mbtn mbtn-play" onclick="newGame();closeGO()">↺ 再來一局</button>
+      <button class="mbtn mbtn-learn" onclick="showMenu();closeGO()">⌂ 主選單</button>
     </div>
   </div>
 </div>
 
 <script>
-// ════════════════════════════════════════
-// PIECE DATA
-// ════════════════════════════════════════
-const PI={
-  wK:{e:'👸',n:'粉色國王'}, wQ:{e:'🦄',n:'粉色王后'},
-  wR:{e:'🏰',n:'粉色城堡'}, wB:{e:'🧚',n:'粉色精靈'},
-  wN:{e:'🐴',n:'粉色小馬'}, wP:{e:'🐣',n:'粉色小兵'},
-  bK:{e:'🤴',n:'紫色國王'}, bQ:{e:'🐉',n:'紫色王后'},
-  bR:{e:'🏯',n:'紫色城堡'}, bB:{e:'🦋',n:'紫色精靈'},
-  bN:{e:'🦊',n:'紫色騎士'}, bP:{e:'🌸',n:'紫色小兵'},
-};
-const PROMO_W=[{t:'Q',e:'🦄',n:'王后'},{t:'R',e:'🏰',n:'城堡'},{t:'B',e:'🧚',n:'精靈'},{t:'N',e:'🐴',n:'騎士'}];
-const PROMO_B=[{t:'Q',e:'🐉',n:'王后'},{t:'R',e:'🏯',n:'城堡'},{t:'B',e:'🦋',n:'精靈'},{t:'N',e:'🦊',n:'騎士'}];
+// ══════════════════════════════════════════
+//  CANVAS SETUP
+// ══════════════════════════════════════════
+const canvas = document.getElementById('board-canvas');
+const ctx    = canvas.getContext('2d');
+let BSIZE, FRAME, CS; // board pixel size, frame width, cell size
 
-// ════════════════════════════════════════
-// GAME STATE
-// ════════════════════════════════════════
+function sizeBoard() {
+  const wrap = document.getElementById('board-wrap');
+  const sz = wrap.offsetWidth;
+  canvas.width = canvas.height = sz;
+  canvas.style.width = canvas.style.height = sz + 'px';
+  BSIZE = sz;
+  FRAME = Math.round(sz * 0.06);
+  CS    = (BSIZE - FRAME*2) / 8;
+}
+window.addEventListener('resize', () => { sizeBoard(); if(B.length) renderBoard(); });
+
+// ══════════════════════════════════════════
+//  PIECE DATA (Unicode chess symbols)
+// ══════════════════════════════════════════
+const SYM = {
+  wK:'♔',wQ:'♕',wR:'♖',wB:'♗',wN:'♘',wP:'♙',
+  bK:'♚',bQ:'♛',bR:'♜',bB:'♝',bN:'♞',bP:'♟'
+};
+const PNAME = {K:'國王King',Q:'王后Queen',R:'城堡Rook',B:'主教Bishop',N:'騎士Knight',P:'士兵Pawn'};
+const PINAMES = {
+  wK:'白方國王',wQ:'白方王后',wR:'白方城堡',wB:'白方主教',wN:'白方騎士',wP:'白方士兵',
+  bK:'黑方國王',bQ:'黑方王后',bR:'黑方城堡',bB:'黑方主教',bN:'黑方騎士',bP:'黑方士兵',
+};
+const PROMO_W=[{t:'Q',s:'♕',n:'王后'},{t:'R',s:'♖',n:'城堡'},{t:'B',s:'♗',n:'主教'},{t:'N',s:'♘',n:'騎士'}];
+const PROMO_B=[{t:'Q',s:'♛',n:'王后'},{t:'R',s:'♜',n:'城堡'},{t:'B',s:'♝',n:'主教'},{t:'N',s:'♞',n:'騎士'}];
+
+// ══════════════════════════════════════════
+//  GAME STATE
+// ══════════════════════════════════════════
 let B=[],turn='w',sel=null,vMoves=[],over=false;
 let hist=[],ep=null,cr={},caps={w:[],b:[]},lm=null,pending=null;
-let gameMode='2p';   // '2p' or 'ai'
-let aiDiff='easy';   // 'easy' or 'hard'
-let voiceLang='en';  // 'zh' or 'en'
+let gameMode='2p', aiDiff='easy', voiceLang='zh';
 
 function initGame(){
   B=[
@@ -355,18 +283,17 @@ function initGame(){
     ['wP','wP','wP','wP','wP','wP','wP','wP'],
     ['wR','wN','wB','wQ','wK','wB','wN','wR'],
   ];
-  turn='w'; sel=null; vMoves=[]; over=false; hist=[];
-  ep=null; cr={wK:true,wKR:true,wQR:true,bK:true,bKR:true,bQR:true};
-  caps={w:[],b:[]}; lm=null; pending=null;
-  // Update AI label
-  document.getElementById('b-label').textContent = gameMode==='ai' ? '🤖 電腦 AI' : '🐉 紫色王國';
+  turn='w';sel=null;vMoves=[];over=false;hist=[];
+  ep=null;cr={wK:true,wKR:true,wQR:true,bK:true,bKR:true,bQR:true};
+  caps={w:[],b:[]};lm=null;pending=null;
+  document.getElementById('lbl-b').textContent=gameMode==='ai'?'🤖 電腦 AI':'♟ 黑方';
 }
 function cloneB(b){return b.map(r=>[...r]);}
 function saveS(){return{B:cloneB(B),turn,ep:ep?{...ep}:null,cr:{...cr},caps:{w:[...caps.w],b:[...caps.b]},lm:lm?{...lm}:null};}
 
-// ════════════════════════════════════════
-// CHESS ENGINE
-// ════════════════════════════════════════
+// ══════════════════════════════════════════
+//  CHESS ENGINE
+// ══════════════════════════════════════════
 function pseudoM(b,row,col,epT){
   const p=b[row][col];if(!p)return[];
   const c=p[0],t=p[1],opp=c==='w'?'b':'w',mv=[];
@@ -424,11 +351,10 @@ function hasLegal(b,c,epT,crIn){
   return false;
 }
 
-// ════════════════════════════════════════
-// AI ENGINE — Minimax + Alpha-Beta
-// ════════════════════════════════════════
+// ══════════════════════════════════════════
+//  AI ENGINE
+// ══════════════════════════════════════════
 const PVAL={P:100,N:320,B:330,R:500,Q:975,K:20000};
-// Piece-square tables (white perspective, row 0=rank8, row 7=rank1)
 const PST={
   P:[[0,0,0,0,0,0,0,0],[50,50,50,50,50,50,50,50],[10,10,20,30,30,20,10,10],[5,5,10,25,25,10,5,5],[0,0,0,20,20,0,0,0],[5,-5,-10,0,0,-10,-5,5],[5,10,10,-20,-20,10,10,5],[0,0,0,0,0,0,0,0]],
   N:[[-50,-40,-30,-30,-30,-30,-40,-50],[-40,-20,0,0,0,0,-20,-40],[-30,0,10,15,15,10,0,-30],[-30,5,15,20,20,15,5,-30],[-30,0,15,20,20,15,0,-30],[-30,5,10,15,15,10,5,-30],[-40,-20,0,5,5,0,-20,-40],[-50,-40,-30,-30,-30,-30,-40,-50]],
@@ -437,99 +363,47 @@ const PST={
   Q:[[-20,-10,-10,-5,-5,-10,-10,-20],[-10,0,0,0,0,0,0,-10],[-10,0,5,5,5,5,0,-10],[-5,0,5,5,5,5,0,-5],[0,0,5,5,5,5,0,-5],[-10,5,5,5,5,5,0,-10],[-10,0,5,0,0,0,0,-10],[-20,-10,-10,-5,-5,-10,-10,-20]],
   K:[[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-20,-30,-30,-40,-40,-30,-30,-20],[-10,-20,-20,-20,-20,-20,-20,-10],[20,20,0,0,0,0,20,20],[20,30,10,0,0,10,30,20]],
 };
-function evalBoard(bd){
-  let s=0;
-  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
-    const p=bd[r][c];if(!p)continue;
-    const isW=p[0]==='w',t=p[1];
-    const v=PVAL[t]||0;
-    const pr=isW?r:7-r;
-    const pst=PST[t]?PST[t][pr][c]:0;
-    s+=isW?(v+pst):-(v+pst);
-  }
-  return s;
-}
-function getAllMoves(bd,c,epT,crIn){
-  const mv=[];
-  for(let r=0;r<8;r++)for(let cc=0;cc<8;cc++)
-    if(bd[r][cc]&&bd[r][cc][0]===c)getLegal(bd,r,cc,epT,crIn).forEach(m=>mv.push({fr:r,fc:cc,tr:m.r,tc:m.c,mv:m}));
-  return mv;
-}
+function evalB(bd){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=bd[r][c];if(!p)continue;const isW=p[0]==='w',t=p[1],v=PVAL[t]||0,pr=isW?r:7-r,pst=PST[t]?PST[t][pr][c]:0;s+=isW?(v+pst):-(v+pst);}return s;}
+function getAllM(bd,c,epT,crIn){const mv=[];for(let r=0;r<8;r++)for(let cc=0;cc<8;cc++)if(bd[r][cc]&&bd[r][cc][0]===c)getLegal(bd,r,cc,epT,crIn).forEach(m=>mv.push({fr:r,fc:cc,tr:m.r,tc:m.c,mv:m}));return mv;}
 function minimax(bd,depth,alpha,beta,maxing,epT,crIn){
-  if(depth===0)return evalBoard(bd);
-  const c=maxing?'w':'b';
-  const moves=getAllMoves(bd,c,epT,crIn);
+  if(depth===0)return evalB(bd);
+  const c=maxing?'w':'b',moves=getAllM(bd,c,epT,crIn);
   if(!moves.length)return inCheck(bd,c)?(maxing?-60000:60000):0;
-  // Move ordering: captures first
   moves.sort((a,b2)=>(bd[b2.tr][b2.tc]?1:0)-(bd[a.tr][a.tc]?1:0));
-  if(maxing){
-    let best=-Infinity;
-    for(const m of moves){
-      const{nb,nCR,nEP}=applyM(bd,m.fr,m.fc,m.tr,m.tc,m.mv,crIn,epT);
-      // AI auto-promotes to queen
-      if(bd[m.fr][m.fc][1]==='P'&&(m.tr===0||m.tr===7))nb[m.tr][m.tc]=(bd[m.fr][m.fc][0])+'Q';
-      best=Math.max(best,minimax(nb,depth-1,alpha,beta,false,nEP,nCR));
-      alpha=Math.max(alpha,best);if(beta<=alpha)break;
-    }
-    return best;
-  }else{
-    let best=Infinity;
-    for(const m of moves){
-      const{nb,nCR,nEP}=applyM(bd,m.fr,m.fc,m.tr,m.tc,m.mv,crIn,epT);
-      if(bd[m.fr][m.fc][1]==='P'&&(m.tr===0||m.tr===7))nb[m.tr][m.tc]=(bd[m.fr][m.fc][0])+'Q';
-      best=Math.min(best,minimax(nb,depth-1,alpha,beta,true,nEP,nCR));
-      beta=Math.min(beta,best);if(beta<=alpha)break;
-    }
-    return best;
-  }
+  if(maxing){let best=-Infinity;for(const m of moves){const{nb,nCR,nEP}=applyM(bd,m.fr,m.fc,m.tr,m.tc,m.mv,crIn,epT);if(bd[m.fr][m.fc][1]==='P'&&(m.tr===0||m.tr===7))nb[m.tr][m.tc]=bd[m.fr][m.fc][0]+'Q';best=Math.max(best,minimax(nb,depth-1,alpha,beta,false,nEP,nCR));alpha=Math.max(alpha,best);if(beta<=alpha)break;}return best;}
+  else{let best=Infinity;for(const m of moves){const{nb,nCR,nEP}=applyM(bd,m.fr,m.fc,m.tr,m.tc,m.mv,crIn,epT);if(bd[m.fr][m.fc][1]==='P'&&(m.tr===0||m.tr===7))nb[m.tr][m.tc]=bd[m.fr][m.fc][0]+'Q';best=Math.min(best,minimax(nb,depth-1,alpha,beta,true,nEP,nCR));beta=Math.min(beta,best);if(beta<=alpha)break;}return best;}
 }
-function getBestMove(bd,c,epT,crIn){
-  const depth=aiDiff==='easy'?2:3;
-  const moves=getAllMoves(bd,c,epT,crIn);
-  if(!moves.length)return null;
-  // Easy: 25% random
-  if(aiDiff==='easy'&&Math.random()<.25)return moves[Math.floor(Math.random()*moves.length)];
-  const maxing=c==='w';
-  let bestMove=null,bestVal=maxing?-Infinity:Infinity;
-  for(const m of moves){
-    const{nb,nCR,nEP}=applyM(bd,m.fr,m.fc,m.tr,m.tc,m.mv,crIn,epT);
-    if(bd[m.fr][m.fc][1]==='P'&&(m.tr===0||m.tr===7))nb[m.tr][m.tc]=(bd[m.fr][m.fc][0])+'Q';
-    const val=minimax(nb,depth-1,-Infinity,Infinity,!maxing,nEP,nCR);
-    if((maxing&&val>bestVal)||(!maxing&&val<bestVal)){bestVal=val;bestMove=m;}
-  }
-  return bestMove||moves[0];
+function getBest(bd,c,epT,crIn){
+  const moves=getAllM(bd,c,epT,crIn);if(!moves.length)return null;
+  if(aiDiff==='easy'&&Math.random()<.28)return moves[Math.floor(Math.random()*moves.length)];
+  const depth=aiDiff==='easy'?2:3,maxing=c==='w';
+  let bestM=null,bestV=maxing?-Infinity:Infinity;
+  for(const m of moves){const{nb,nCR,nEP}=applyM(bd,m.fr,m.fc,m.tr,m.tc,m.mv,crIn,epT);if(bd[m.fr][m.fc][1]==='P'&&(m.tr===0||m.tr===7))nb[m.tr][m.tc]=bd[m.fr][m.fc][0]+'Q';const v=minimax(nb,depth-1,-Infinity,Infinity,!maxing,nEP,nCR);if((maxing&&v>bestV)||(!maxing&&v<bestV)){bestV=v;bestM=m;}}
+  return bestM||moves[0];
 }
-
-// ════════════════════════════════════════
-// AI MOVE TRIGGER
-// ════════════════════════════════════════
-function maybeAIMove(){
+function maybeAI(){
   if(gameMode!=='ai'||turn!=='b'||over)return;
-  document.getElementById('ai-thinking').style.display='block';
+  document.getElementById('ai-think').style.display='block';
   setTimeout(()=>{
-    const m=getBestMove(B,'b',ep,cr);
-    document.getElementById('ai-thinking').style.display='none';
+    const m=getBest(B,'b',ep,cr);
+    document.getElementById('ai-think').style.display='none';
     if(!m)return;
-    // Handle promotion (always queen)
     if(B[m.fr][m.fc][1]==='P'&&m.tr===0){
       hist.push(saveS());
       const{nb,nCR,nEP,cap}=applyM(B,m.fr,m.fc,m.tr,m.tc,m.mv,cr,ep);
-      nb[m.tr][m.tc]='bQ';
-      if(cap)caps.b.push(cap);
+      nb[m.tr][m.tc]='bQ';if(cap)caps.b.push(cap);
       B=nb;cr=nCR;ep=nEP;lm={fr:m.fr,fc:m.fc,tr:m.tr,tc:m.tc};
       sel=null;vMoves=[];turn='w';checkEnd();renderBoard();
-    }else{
-      commitMove(m.fr,m.fc,m.tr,m.tc,m.mv,null);
-    }
-  },400);
+    }else{commitMove(m.fr,m.fc,m.tr,m.tc,m.mv,null);}
+  },450);
 }
 
-// ════════════════════════════════════════
-// GAME ACTIONS
-// ════════════════════════════════════════
+// ══════════════════════════════════════════
+//  GAME ACTIONS
+// ══════════════════════════════════════════
 function cellClick(row,col){
   if(over)return;
-  if(gameMode==='ai'&&turn==='b')return; // block input during AI turn
+  if(gameMode==='ai'&&turn==='b')return;
   const piece=B[row][col];
   if(sel){
     const mv=vMoves.find(m=>m.r===row&&m.c===col);
@@ -552,34 +426,29 @@ function commitMove(fr,fc,tr,tc,mv,promT){
   B=nb;cr=nCR;ep=nEP;lm={fr,fc,tr,tc};
   sel=null;vMoves=[];turn=turn==='w'?'b':'w';
   checkEnd();renderBoard();
-  if(!over)maybeAIMove();
+  if(!over)maybeAI();
 }
 function showPromo(color){
   const opts=color==='w'?PROMO_W:PROMO_B;
-  document.getElementById('promo-choices').innerHTML=opts.map(o=>`<button class="pbtn" onclick="doPromo('${o.t}')">${o.e}<span>${o.n}</span></button>`).join('');
-  document.getElementById('promo-overlay').classList.remove('hidden');
+  document.getElementById('promo-ch').innerHTML=opts.map(o=>`<button class="pbtn" onclick="doPromo('${o.t}')">${o.s}<span>${o.n}</span></button>`).join('');
+  document.getElementById('promo-ov').classList.remove('hide');
 }
-function doPromo(t){
-  document.getElementById('promo-overlay').classList.add('hidden');
-  const{fr,fc,tr,tc,mv}=pending;pending=null;
-  commitMove(fr,fc,tr,tc,mv,t);
-}
+function doPromo(t){document.getElementById('promo-ov').classList.add('hide');const{fr,fc,tr,tc,mv}=pending;pending=null;commitMove(fr,fc,tr,tc,mv,t);}
 function checkEnd(){
   if(!hasLegal(B,turn,ep,cr)){
     over=true;
     if(inCheck(B,turn)){
-      const isHuman=turn==='w'||(gameMode==='2p');
-      const winner=turn==='b'?'🦄 粉色王國':'🐉 '+(gameMode==='ai'?'電腦AI':'紫色王國');
-      showGO('🏆',`${winner} 獲勝！`,inCheck(B,turn)?'✨ 將死！對方國王無路可逃！🎊':'');
-      if(turn==='w'&&gameMode==='ai')showGO('🤖','電腦獲勝！','再練習練習，下次你可以贏！💪');
-    }else{showGO('🤝','平局！','僵局！沒有棋子可以移動，遊戲平局。');}
+      const winSide=turn==='w'?'黑方':'白方';
+      const isAIWin=gameMode==='ai'&&turn==='w';
+      if(isAIWin)showGO('🤖','電腦獲勝！','再練習練習，下次可以贏！💪');
+      else showGO('♛',`${winSide} 獲勝！`,'✨ 將死！對方無路可逃！');
+    }else showGO('🤝','平局！','僵局！沒有棋子可以移動。');
   }
 }
-function showGO(e,t,s){document.getElementById('go-emoji').textContent=e;document.getElementById('go-title').textContent=t;document.getElementById('go-sub').textContent=s;document.getElementById('go-overlay').classList.remove('hidden');}
-function closeGO(){document.getElementById('go-overlay').classList.add('hidden');}
+function showGO(e,t,s){document.getElementById('go-e').textContent=e;document.getElementById('go-t').textContent=t;document.getElementById('go-s').textContent=s;document.getElementById('go-ov').classList.remove('hide');}
+function closeGO(){document.getElementById('go-ov').classList.add('hide');}
 function undoMove(){
   if(!hist.length)return;
-  // In AI mode, undo 2 moves (player + AI)
   if(gameMode==='ai'&&hist.length>=2&&turn==='w')hist.pop();
   const s=hist.pop();
   B=s.B;turn=s.turn;ep=s.ep;cr=s.cr;caps=s.caps;lm=s.lm;
@@ -588,94 +457,224 @@ function undoMove(){
 }
 function newGame(){initGame();closeGO();renderBoard();}
 
-// ════════════════════════════════════════
-// RENDER
-// ════════════════════════════════════════
+// ══════════════════════════════════════════
+//  CANVAS BOARD RENDERING
+// ══════════════════════════════════════════
+const LIGHT_SQ='#f0d9b5', DARK_SQ='#b58863';
+const LIGHT_HL='rgba(255,215,0,0.65)', DARK_HL='rgba(255,235,59,0.38)';
+
 function renderBoard(){
-  const boardEl=document.getElementById('board');
-  boardEl.innerHTML='';
-  const ic=inCheck(B,turn),kp=ic?findKing(B,turn):null;
-  for(let row=0;row<8;row++){
-    for(let col=0;col<8;col++){
-      const cell=document.createElement('div');
-      const light=(row+col)%2===0;
-      let cls='cell '+(light?'cl':'cd');
-      if(sel&&sel.row===row&&sel.col===col)cls+=' sel';
-      else if(lm&&((lm.fr===row&&lm.fc===col)||(lm.tr===row&&lm.tc===col)))cls+=' lm';
-      if(kp&&kp.r===row&&kp.c===col)cls+=' chk';
-      const vm=vMoves.find(m=>m.r===row&&m.c===col);
-      if(vm){cls+=B[row][col]?' vc':' vm';}
-      cell.className=cls;
-      cell.addEventListener('click',()=>cellClick(row,col));
-      cell.addEventListener('touchend',e=>{e.preventDefault();cellClick(row,col);},{passive:false});
-      const p=B[row][col];
-      if(p){const sp=document.createElement('span');sp.className='piece';sp.textContent=PI[p]?.e||'?';cell.appendChild(sp);}
-      boardEl.appendChild(cell);
+  if(!CS) return;
+  ctx.clearRect(0,0,BSIZE,BSIZE);
+
+  // ─ Wooden frame ─
+  const fgrd=ctx.createLinearGradient(0,0,BSIZE,BSIZE);
+  fgrd.addColorStop(0,'#6b3410'); fgrd.addColorStop(.35,'#8b4513'); fgrd.addColorStop(.65,'#a0522d'); fgrd.addColorStop(1,'#6b3410');
+  ctx.fillStyle=fgrd; ctx.fillRect(0,0,BSIZE,BSIZE);
+
+  // Frame bevel highlight
+  ctx.strokeStyle='rgba(255,220,130,.4)'; ctx.lineWidth=2;
+  ctx.strokeRect(3,3,BSIZE-6,BSIZE-6);
+  ctx.strokeStyle='rgba(0,0,0,.3)'; ctx.lineWidth=2;
+  ctx.strokeRect(6,6,BSIZE-12,BSIZE-12);
+
+  // ─ Coordinate labels in frame ─
+  const fSize=Math.max(8,Math.round(FRAME*.55));
+  ctx.font=`bold ${fSize}px 'Times New Roman',Georgia,serif`;
+  ctx.fillStyle='#f0d9b5'; ctx.textBaseline='middle'; ctx.textAlign='center';
+  const files='abcdefgh';
+  for(let i=0;i<8;i++){
+    const x=FRAME+i*CS+CS/2;
+    ctx.fillText(files[i], x, BSIZE-FRAME/2);
+    ctx.fillText(files[i], x, FRAME/2);
+  }
+  ctx.textAlign='center';
+  for(let i=0;i<8;i++){
+    const y=FRAME+i*CS+CS/2;
+    ctx.fillText(String(8-i), FRAME/2, y);
+    ctx.fillText(String(8-i), BSIZE-FRAME/2, y);
+  }
+
+  // ─ Board squares ─
+  const ic=inCheck(B,turn);
+  const kp=ic?findKing(B,turn):null;
+  for(let r=0;r<8;r++){
+    for(let c=0;c<8;c++){
+      const x=FRAME+c*CS, y=FRAME+r*CS;
+      const light=(r+c)%2===0;
+
+      // Base color
+      ctx.fillStyle=light?LIGHT_SQ:DARK_SQ;
+      ctx.fillRect(x,y,CS,CS);
+
+      // Last move tint
+      if(lm&&((lm.fr===r&&lm.fc===c)||(lm.tr===r&&lm.tc===c))){
+        ctx.fillStyle=light?'rgba(204,181,64,.5)':'rgba(171,148,36,.5)';
+        ctx.fillRect(x,y,CS,CS);
+      }
+
+      // Selected
+      if(sel&&sel.row===r&&sel.col===c){
+        ctx.fillStyle='rgba(255,215,0,.7)'; ctx.fillRect(x,y,CS,CS);
+      }
+
+      // Check king
+      if(kp&&kp.r===r&&kp.c===c){
+        const rg=ctx.createRadialGradient(x+CS/2,y+CS/2,CS*.05,x+CS/2,y+CS/2,CS*.7);
+        rg.addColorStop(0,'rgba(255,20,20,.85)'); rg.addColorStop(1,'rgba(255,20,20,.05)');
+        ctx.fillStyle=rg; ctx.fillRect(x,y,CS,CS);
+      }
     }
   }
-  const st=document.getElementById('status');
-  if(!over){
-    const isAITurn=gameMode==='ai'&&turn==='b';
-    const tn=turn==='w'?'🦄 粉色王國':(gameMode==='ai'?'🤖 電腦AI':'🐉 紫色王國');
-    if(ic){st.textContent=`⚠️ ${tn} — 將軍！快保護國王！`;st.style.background='rgba(255,80,80,.88)';st.style.color='white';}
-    else if(isAITurn){st.textContent='🤖 電腦思考中...';st.style.background='rgba(13,71,161,.85)';st.style.color='white';}
-    else{st.textContent=`${tn} 輪到你了！`;st.style.background='rgba(255,255,255,.88)';st.style.color='#6a1b9a';}
+
+  // ─ Valid move indicators ─
+  vMoves.forEach(m=>{
+    const x=FRAME+m.c*CS, y=FRAME+m.r*CS;
+    if(B[m.r][m.c]){
+      // Capture: ring
+      ctx.strokeStyle='rgba(50,180,50,.85)'; ctx.lineWidth=Math.max(2,CS*.06);
+      ctx.strokeRect(x+CS*.05,y+CS*.05,CS*.9,CS*.9);
+    } else {
+      // Empty: subtle dot
+      ctx.fillStyle='rgba(50,180,50,.55)';
+      ctx.beginPath(); ctx.arc(x+CS/2,y+CS/2,CS*.16,0,Math.PI*2); ctx.fill();
+    }
+  });
+
+  // ─ Pieces ─
+  for(let r=0;r<8;r++){
+    for(let c=0;c<8;c++){
+      const piece=B[r][c]; if(!piece) continue;
+      const cx=FRAME+c*CS+CS/2, cy=FRAME+r*CS+CS/2;
+      drawPiece(piece,cx,cy,CS);
+    }
   }
-  document.getElementById('pinfo-w').classList.toggle('active',turn==='w');
-  document.getElementById('pinfo-b').classList.toggle('active',turn==='b');
-  document.getElementById('turn-w').textContent=turn==='w'&&!over?'⭐ 你的回合':'';
-  document.getElementById('turn-b').textContent=turn==='b'&&!over?(gameMode==='ai'?'🤖 思考中':'⭐ 你的回合'):'';
-  document.getElementById('cap-w').textContent=caps.w.map(p=>PI[p]?.e||'').join('');
-  document.getElementById('cap-b').textContent=caps.b.map(p=>PI[p]?.e||'').join('');
+
+  // ─ Update HTML status ─
+  updateStatus();
 }
 
-// ════════════════════════════════════════
-// VOICE / SPEECH
-// ════════════════════════════════════════
+function drawPiece(piece,cx,cy,cs){
+  const isW=piece[0]==='w', sym=SYM[piece];
+  const fs=Math.floor(cs*.72);
+
+  ctx.save();
+  ctx.font=`normal ${fs}px 'Times New Roman','Segoe Chess','FreeSerif',serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+
+  // Drop shadow
+  ctx.shadowColor='rgba(0,0,0,0.6)';
+  ctx.shadowBlur=Math.max(3,cs*.06);
+  ctx.shadowOffsetX=cs*.03; ctx.shadowOffsetY=cs*.04;
+
+  if(isW){
+    // Outline pass
+    ctx.lineWidth=Math.max(1.5,cs*.085);
+    ctx.strokeStyle='#3d1e00'; ctx.lineJoin='round';
+    ctx.strokeText(sym,cx,cy);
+    // Clear shadow before fill
+    ctx.shadowColor='transparent';
+    // Fill: warm ivory
+    ctx.fillStyle='#f5f0de';
+    ctx.fillText(sym,cx,cy);
+    // Subtle inner highlight
+    ctx.globalAlpha=.22;
+    ctx.fillStyle='white';
+    ctx.fillText(sym,cx-cs*.02,cy-cs*.02);
+    ctx.globalAlpha=1;
+  } else {
+    // Outline: warm gold
+    ctx.lineWidth=Math.max(1.5,cs*.085);
+    ctx.strokeStyle='#c89028'; ctx.lineJoin='round';
+    ctx.strokeText(sym,cx,cy);
+    ctx.shadowColor='transparent';
+    // Fill: rich dark ebony
+    ctx.fillStyle='#0d0602';
+    ctx.fillText(sym,cx,cy);
+  }
+  ctx.restore();
+}
+
+function updateStatus(){
+  const st=document.getElementById('status');
+  const ic=inCheck(B,turn);
+  const isAI=gameMode==='ai'&&turn==='b';
+  const sideZh=turn==='w'?'♔ 白方':'♚ '+(gameMode==='ai'?'電腦AI':'黑方');
+  if(ic){st.textContent=`⚠️ ${sideZh} — 將軍！快保護國王！`;st.style.background='rgba(140,20,20,.8)';st.style.color='#ffd0d0';}
+  else if(isAI){st.textContent='🤖 電腦AI 思考中...';st.style.background='rgba(13,56,130,.8)';st.style.color='#b0d0ff';}
+  else{st.textContent=`${sideZh} 輪到你了`;st.style.background='rgba(50,30,0,.8)';st.style.color='#f5dca0';}
+  // Player panels
+  document.getElementById('pi-w').classList.toggle('turn',turn==='w'&&!over);
+  document.getElementById('pi-b').classList.toggle('turn',turn==='b'&&!over);
+  document.getElementById('trn-w').textContent=turn==='w'&&!over?'▶ 你的回合':'';
+  document.getElementById('trn-b').textContent=turn==='b'&&!over?(gameMode==='ai'?'🤖 思考中':'▶ 你的回合'):'';
+  // Captured pieces
+  document.getElementById('cap-w').textContent=caps.w.map(p=>SYM[p]||'').join('');
+  document.getElementById('cap-b').textContent=caps.b.map(p=>SYM[p]||'').join('');
+}
+
+// ══════════════════════════════════════════
+//  TOUCH / CLICK INPUT
+// ══════════════════════════════════════════
+function canvasHit(px,py){
+  if(!CS)return;
+  const col=Math.floor((px-FRAME)/CS), row=Math.floor((py-FRAME)/CS);
+  if(col>=0&&col<8&&row>=0&&row<8) cellClick(row,col);
+}
+canvas.addEventListener('touchend',e=>{
+  e.preventDefault();
+  const r=canvas.getBoundingClientRect();
+  const t=e.changedTouches[0];
+  const scaleX=BSIZE/r.width, scaleY=BSIZE/r.height;
+  canvasHit((t.clientX-r.left)*scaleX,(t.clientY-r.top)*scaleY);
+},{passive:false});
+canvas.addEventListener('mousedown',e=>{
+  const r=canvas.getBoundingClientRect();
+  const scaleX=BSIZE/r.width, scaleY=BSIZE/r.height;
+  canvasHit((e.clientX-r.left)*scaleX,(e.clientY-r.top)*scaleY);
+});
+
+// ══════════════════════════════════════════
+//  VOICE
+// ══════════════════════════════════════════
 function setLang(l){
   voiceLang=l;
-  document.getElementById('lang-zh').classList.toggle('active',l==='zh');
-  document.getElementById('lang-en').classList.toggle('active',l==='en');
+  document.getElementById('lzh').classList.toggle('sel',l==='zh');
+  document.getElementById('len').classList.toggle('sel',l==='en');
 }
-function speakCard(btn){
+function spk(btn){
   if(!window.speechSynthesis)return;
   const text=voiceLang==='zh'?btn.dataset.zh:btn.dataset.en;
   const lang=voiceLang==='zh'?'zh-TW':'en-US';
   window.speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text);
-  u.lang=lang; u.rate=0.88; u.pitch=1.05;
-  // Try to pick a nice voice
+  u.lang=lang;u.rate=.88;u.pitch=1.05;
   const voices=window.speechSynthesis.getVoices();
-  const match=voices.find(v=>v.lang.startsWith(voiceLang==='zh'?'zh':'en')&&v.name.includes('Female'));
-  const fallback=voices.find(v=>v.lang.startsWith(voiceLang==='zh'?'zh':'en'));
-  if(match)u.voice=match; else if(fallback)u.voice=fallback;
+  const m=voices.find(v=>v.lang.startsWith(voiceLang==='zh'?'zh':'en'));
+  if(m)u.voice=m;
   window.speechSynthesis.speak(u);
 }
-// Load voices on iOS (requires this call)
 if(window.speechSynthesis){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();}
 
-// ════════════════════════════════════════
-// NAVIGATION
-// ════════════════════════════════════════
-function show(id){['menu','game','tutorial'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==id));}
-function showMenu(){window.speechSynthesis&&window.speechSynthesis.cancel();show('menu');}
-function showTutorial(){window.speechSynthesis&&window.speechSynthesis.cancel();show('tutorial');}
-function setDiff(d){
-  aiDiff=d;
-  document.getElementById('diff-easy').classList.toggle('active',d==='easy');
-  document.getElementById('diff-hard').classList.toggle('active',d==='hard');
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
+function show(id){
+  ['menu','game','tutorial'].forEach(s=>document.getElementById(s).classList.toggle('hide',s!==id));
 }
+function showMenu(){window.speechSynthesis&&window.speechSynthesis.cancel();show('menu');}
+function showTut(){window.speechSynthesis&&window.speechSynthesis.cancel();show('tutorial');}
+function setDiff(d){aiDiff=d;document.getElementById('d-easy').classList.toggle('sel',d==='easy');document.getElementById('d-hard').classList.toggle('sel',d==='hard');}
 function startGame(mode){
   gameMode=mode;
   show('game');
+  sizeBoard();
   newGame();
 }
 
-// ════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════
-// fix vMoves reset typo
-
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
 initGame();
 showMenu();
 </script>
