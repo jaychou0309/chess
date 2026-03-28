@@ -374,7 +374,11 @@ canvas.addEventListener('mousedown',e=>{const br=canvas.getBoundingClientRect();
 
 function handleClick(px,py){
   if(!G||G.over)return;
-  if(gameMode==='ai'&&G.turn==='b')return;
+  // Full: black is always AI. Dark: block when it's not human's assigned color
+  if(gameMode==='ai'){
+    if(boardMode==='full'&&G.turn==='b')return;
+    if(boardMode==='dark'&&G.myColor&&G.turn!==G.myColor)return;
+  }
   if(boardMode==='dark')handleDarkClick(px,py);
   else handleFullClick(px,py);
 }
@@ -445,7 +449,8 @@ function doDarkMove(fr,fc,tr,tc){
   sel=null;vmoves=[];
   // Check win
   if(!G.bKalive||!G.rKalive){
-    G.over=true;G.winner=G.myColor;// whoever captures general wins
+    G.over=true;
+    G.winner=!G.bKalive?'r':'b';// red wins if black king gone; black wins if red king gone
     render();setTimeout(showOver,400);return;
   }
   // Check if opponent has any moves left
@@ -494,7 +499,7 @@ function getDarkMoves(r,c){
       while(ok(nr,nc)){
         const t=G.board[nr][nc];
         if(!screen){if(!t)mv.push({r:nr,c:nc});else screen=true;}
-        else{if(t){if(t.revealed&&t.piece[0]!==col)mv.push({r:nr,c:nc});break;}}
+        else{if(t){if(t.revealed&&t.piece[0]!==col&&darkCanBeat(cell.piece,t.piece))mv.push({r:nr,c:nc});break;}}
         nr+=dr;nc+=dc;
       }
     });
