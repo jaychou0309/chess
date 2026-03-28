@@ -9,41 +9,38 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 html,body{width:100%;height:100%;overflow:hidden}
-body{background:#1a0e04;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:-apple-system,'PingFang TC',sans-serif}
+body{background:#1a0e04;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:-apple-system,'PingFang TC','Hiragino Sans GB',sans-serif}
 .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .3s;z-index:10}
 .screen.hide{opacity:0;pointer-events:none}
-/* MENU */
 #menu{background:radial-gradient(ellipse at 50% 35%,#2a1206 0%,#0e0804 100%)}
 .m-ic{font-size:clamp(3.5rem,12vw,5.5rem);animation:fl 3s ease-in-out infinite}
 @keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .m-tt{font-size:clamp(1.8rem,6.5vw,2.8rem);font-weight:900;color:#d4a030;text-shadow:0 0 20px rgba(212,160,48,.5);margin:6px 0 3px;text-align:center}
 .m-sb{color:#8d6e33;font-size:clamp(.8rem,2.4vw,.95rem);margin:0 0 16px}
 .diff-row{display:flex;gap:10px;margin-bottom:10px}
-.diff-btn{padding:8px 20px;border:2px solid #d4a030;border-radius:28px;font-size:clamp(.78rem,2.2vw,.9rem);font-weight:bold;font-family:inherit;cursor:pointer;background:transparent;color:#d4a030;transition:all .14s}
+.diff-btn{padding:7px 18px;border:2px solid #d4a030;border-radius:28px;font-size:clamp(.76rem,2.2vw,.88rem);font-weight:bold;font-family:inherit;cursor:pointer;background:transparent;color:#d4a030;transition:all .14s}
 .diff-btn.sel,.diff-btn:active{background:#d4a030;color:#1a0e02}
-.mbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:min(270px,78vw);padding:13px 20px;margin:6px;font-size:clamp(.95rem,3.2vw,1.15rem);font-weight:bold;font-family:inherit;border:none;border-radius:50px;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.5);transition:transform .12s}
+.mbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:min(280px,80vw);padding:13px 20px;margin:5px;font-size:clamp(.92rem,3.2vw,1.12rem);font-weight:bold;font-family:inherit;border:none;border-radius:50px;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.5);transition:transform .12s}
 .mbtn:active{transform:scale(.93)}
-.mbtn-p{background:linear-gradient(135deg,#b71c1c,#7f0000);color:white}
-.mbtn-ai{background:linear-gradient(135deg,#1565c0,#0d47a1);color:white}
-.mbtn-half{background:linear-gradient(135deg,#2e7d32,#1b5e20);color:white}
+.mbtn-r{background:linear-gradient(135deg,#b71c1c,#7f0000);color:white}
+.mbtn-b{background:linear-gradient(135deg,#1565c0,#0d47a1);color:white}
+.mbtn-dark{background:linear-gradient(135deg,#37474f,#1c313a);color:#eceff1}
 .mbtn-back{background:rgba(255,255,255,.1);color:#c8a060}
+.sec-lbl{font-size:clamp(.78rem,2.2vw,.88rem);color:#a0784a;margin:10px 0 5px;text-align:center}
 /* GAME */
 #game{background:#1a0e04;gap:3px}
 .prow{display:flex;align-items:center;justify-content:space-between;font-weight:bold;border-radius:18px;padding:5px 12px}
-:root{--bz:min(96vw,calc(100vh - 170px))}
-.prow{width:var(--bz);max-width:560px;font-size:clamp(.7rem,2vw,.86rem)}
 .prow-r{background:rgba(80,10,10,.9);color:#f48fb1;border:1.5px solid #7f0000}
 .prow-b2{background:rgba(10,20,50,.9);color:#90caf9;border:1.5px solid #1565c0}
 .prow.active{box-shadow:0 0 0 2px #d4a030,0 0 12px rgba(212,160,48,.4)}
-#board-wrap{position:relative;max-width:560px}
-#board{position:absolute;top:0;left:0;touch-action:none}
-#status{width:var(--bz);max-width:560px;padding:5px 14px;border-radius:16px;font-size:clamp(.74rem,2.2vw,.88rem);font-weight:bold;text-align:center;background:rgba(40,20,0,.85);color:#f5dca0;border:1px solid #5c3010;flex-shrink:0}
+#board-wrap{position:relative}
+#board{display:block;touch-action:none;cursor:pointer}
+#status{padding:5px 14px;border-radius:16px;font-size:clamp(.74rem,2.2vw,.88rem);font-weight:bold;text-align:center;background:rgba(40,20,0,.85);color:#f5dca0;border:1px solid #5c3010;flex-shrink:0}
 .gbtns{display:flex;gap:6px}
 .gb{padding:6px 11px;border:none;border-radius:16px;font-size:clamp(.68rem,2vw,.8rem);font-weight:bold;font-family:inherit;cursor:pointer;transition:transform .1s}
 .gb:active{transform:scale(.92)}
-.gb-undo{background:#c8a030;color:#1a0e02}.gb-new{background:#c62828;color:white}.gb-back{background:rgba(255,255,255,.12);color:#c8a060}.gb-mode{background:#2e7d32;color:white}
+.gb-u{background:#c8a030;color:#1a0e02}.gb-n{background:#c62828;color:white}.gb-bk{background:rgba(255,255,255,.12);color:#c8a060}
 #ai-ind{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(21,101,192,.9);color:white;padding:10px 24px;border-radius:24px;font-size:clamp(.9rem,3vw,1.1rem);font-weight:bold;display:none;z-index:150;box-shadow:0 6px 22px rgba(0,0,0,.5)}
-/* GAME OVER */
 #scr-over{background:rgba(0,0,0,.85);backdrop-filter:blur(8px)}
 .oe{font-size:clamp(3rem,11vw,5rem);animation:bo .5s ease infinite alternate}
 @keyframes bo{from{transform:translateY(0)}to{transform:translateY(-14px)}}
@@ -52,37 +49,44 @@ body{background:#1a0e04;display:flex;flex-direction:column;align-items:center;ju
 </style>
 </head>
 <body>
+
 <!-- MENU -->
 <div class="screen" id="menu">
   <div class="m-ic">🀄</div>
   <div class="m-tt">中國象棋</div>
   <div class="m-sb">Chinese Chess · Xiangqi</div>
-  <div style="color:#a0784a;font-size:clamp(.76rem,2.2vw,.86rem);margin-bottom:8px">⚡ 電腦難度</div>
+  <div class="sec-lbl">⚡ AI 難度</div>
   <div class="diff-row">
     <button class="diff-btn sel" id="d-easy" onclick="setD('easy')">🌟 簡單</button>
     <button class="diff-btn" id="d-hard" onclick="setD('hard')">🔥 困難</button>
   </div>
-  <button class="mbtn mbtn-p"    onclick="startG('2p','full')">👫 雙人對戰（全盤）</button>
-  <button class="mbtn mbtn-ai"   onclick="startG('ai','full')">🤖 對抗電腦（全盤）</button>
-  <button class="mbtn mbtn-half" onclick="startG('2p','half')">📚 半盤教學模式</button>
-  <button class="mbtn mbtn-back" onclick="location.href='index.html'">⌂ 遊戲大廳</button>
+  <div class="sec-lbl">♟ 全盤象棋</div>
+  <div style="display:flex;gap:8px;justify-content:center">
+    <button class="mbtn mbtn-r" style="width:auto;padding:12px 18px" onclick="startG('2p','full')">👫 雙人</button>
+    <button class="mbtn mbtn-b" style="width:auto;padding:12px 18px" onclick="startG('ai','full')">🤖 AI對戰</button>
+  </div>
+  <div class="sec-lbl">🃏 暗棋（翻牌象棋）</div>
+  <div style="display:flex;gap:8px;justify-content:center">
+    <button class="mbtn mbtn-dark" style="width:auto;padding:12px 18px" onclick="startG('2p','dark')">👫 雙人暗棋</button>
+    <button class="mbtn mbtn-dark" style="width:auto;padding:12px 18px" onclick="startG('ai','dark')">🤖 AI暗棋</button>
+  </div>
+  <button class="mbtn mbtn-back" style="margin-top:10px" onclick="location.href='index.html'">⌂ 遊戲大廳</button>
 </div>
 
 <!-- GAME -->
 <div class="screen hide" id="game">
-  <div class="prow prow-b2" id="pb2">
+  <div class="prow prow-b2" id="pb2" style="width:100%;max-width:560px">
     <span id="lbl-b2">🔵 黑方</span><span id="trn-b2"></span>
   </div>
-  <div id="board-wrap"><canvas id="board" style="cursor:pointer"></canvas></div>
-  <div id="status">♟ 紅方先手</div>
-  <div class="prow prow-r" id="pr">
-    <span>🔴 紅方</span><span id="trn-r">▶ 你的回合</span>
+  <div id="board-wrap"><canvas id="board"></canvas></div>
+  <div id="status" style="width:100%;max-width:560px">♟ 準備開始</div>
+  <div class="prow prow-r" id="pr" style="width:100%;max-width:560px">
+    <span id="lbl-r">🔴 紅方</span><span id="trn-r">▶ 你的回合</span>
   </div>
   <div class="gbtns">
-    <button class="gb gb-undo" onclick="undo()">↩ 悔棋</button>
-    <button class="gb gb-new"  onclick="newG()">↺ 新局</button>
-    <button class="gb gb-mode" id="mode-btn" onclick="toggleMode()">📋 全盤</button>
-    <button class="gb gb-back" onclick="goMenu()">⌂ 選單</button>
+    <button class="gb gb-u" onclick="undo()">↩ 悔棋</button>
+    <button class="gb gb-n" onclick="newG()">↺ 新局</button>
+    <button class="gb gb-bk" onclick="goMenu()">⌂ 選單</button>
   </div>
 </div>
 <div id="ai-ind">🤖 電腦思考中…</div>
@@ -92,22 +96,29 @@ body{background:#1a0e04;display:flex;flex-direction:column;align-items:center;ju
   <div class="oe" id="oe">🔴</div>
   <div class="ot" id="ot" style="color:#d4a030"></div>
   <div class="os" id="os"></div>
-  <button class="mbtn mbtn-p"    onclick="newG();closeO()" style="margin:5px">↺ 再局</button>
+  <button class="mbtn mbtn-r" onclick="newG();closeO()" style="margin:5px">↺ 再局</button>
   <button class="mbtn mbtn-back" onclick="goMenu();closeO()" style="margin:5px">⌂ 選單</button>
 </div>
 
 <script>
-// ═══ BOARD SETUP ═══
-// Coordinates: board[row][col], row 0=top(black side), row 9=bottom(red side)
-// Piece codes: 'rK','rA','rE','rH','rR','rC','rP', 'bK','bA','bE','bH','bR','bC','bP'
-// r=red, b=black; K=king, A=advisor, E=elephant, H=horse, R=rook, C=cannon, P=pawn
-
+// ════════════════════════════════
+//  PIECE DEFINITIONS
+// ════════════════════════════════
 const CNAME={
   rK:'帥',rA:'仕',rE:'相',rH:'馬',rR:'車',rC:'炮',rP:'兵',
   bK:'將',bA:'士',bE:'象',bH:'馬',bR:'車',bC:'炮',bP:'卒',
 };
+// Rank for 暗棋 capture: higher beats lower (except 兵/卒 beats 帥/將)
+const RANK={rK:8,bK:8,rA:7,bA:7,rE:6,bE:6,rR:5,bR:5,rH:4,bH:4,rC:3,bC:3,rP:2,bP:2};
 
-const INIT_BOARD=[
+// All 32 dark chess pieces (shuffled randomly)
+const DARK_ALL=[
+  'rK','rA','rA','rE','rE','rR','rR','rH','rH','rC','rC','rP','rP','rP','rP','rP',
+  'bK','bA','bA','bE','bE','bR','bR','bH','bH','bC','bC','bP','bP','bP','bP','bP',
+];
+
+// Full board initial setup
+const FULL_INIT=[
   ['bR','bH','bE','bA','bK','bA','bE','bH','bR'],
   [null,null,null,null,null,null,null,null,null],
   [null,'bC',null,null,null,null,null,'bC',null],
@@ -120,385 +131,552 @@ const INIT_BOARD=[
   ['rR','rH','rE','rA','rK','rA','rE','rH','rR'],
 ];
 
-const HALF_BOARD_R=[ // only red side (rows 5-9), black area empty
-  [null,null,null,null,null,null,null,null,null],
-  [null,null,null,null,null,null,null,null,null],
-  [null,null,null,null,null,null,null,null,null],
-  [null,null,null,null,null,null,null,null,null],
-  [null,null,null,null,null,null,null,null,null],
-  [null,null,null,null,null,null,null,null,null],
-  ['rP',null,'rP',null,'rP',null,'rP',null,'rP'],
-  [null,'rC',null,null,null,null,null,'rC',null],
-  [null,null,null,null,null,null,null,null,null],
-  ['rR','rH','rE','rA','rK','rA','rE','rH','rR'],
-];
-
+// ════════════════════════════════
+//  CANVAS & SIZING
+// ════════════════════════════════
 const canvas=document.getElementById('board'),ctx=canvas.getContext('2d');
-let BW,BH,MARG,CW2,CH2; // board pixel dimensions
+let BW,BH,MARG,CW2,CH2,ROWS,COLS;
 let G=null,aiDiff='easy',gameMode='2p',boardMode='full';
 let sel=null,vmoves=[];
 
 function sizeBoard(){
+  const isDark=boardMode==='dark';
+  ROWS=isDark?4:10; COLS=isDark?8:9;
+  const ratio=COLS/ROWS;
+  const maxW=Math.min(window.innerWidth*.96,540);
+  const maxH=window.innerHeight-180;
+  let w=maxW,h=w/ratio;
+  if(h>maxH){h=maxH;w=h*ratio;}
+  canvas.width=Math.round(w); canvas.height=Math.round(h);
+  canvas.style.width=canvas.style.height='';
+  BW=canvas.width; BH=canvas.height;
+  MARG=isDark?BW*.07:BW*.065;
+  CW2=isDark?(BW-MARG*2)/(COLS-1):(BW-MARG*2)/(COLS-1);
+  CH2=isDark?(BH-MARG*2)/(ROWS-1):(BH-MARG*2)/(ROWS-1);
+  // For dark chess: grid is placed at INTERSECTIONS (4×8 = intersection board for pieces)
+  // Actually for 暗棋, pieces sit IN CELLS, not on intersections
+  if(isDark){
+    CW2=(BW-MARG*2)/COLS;
+    CH2=(BH-MARG*2)/ROWS;
+  }
+  // set board-wrap size
   const wrap=document.getElementById('board-wrap');
-  const cw=Math.min(window.innerWidth*.96,560);
-  // 9 cols, 10 rows → ratio 9:10
-  const ch=cw*10/9;
-  wrap.style.width=cw+'px';wrap.style.height=ch+'px';
-  canvas.width=cw;canvas.height=ch;
-  canvas.style.width=cw+'px';canvas.style.height=ch+'px';
-  document.getElementById('status').style.width=cw+'px';
-  document.getElementById('pb2').style.width=cw+'px';
-  document.getElementById('pr').style.width=cw+'px';
-  MARG=cw*.065;CW2=(cw-MARG*2)/8;CH2=(ch-MARG*2)/9;BW=cw;BH=ch;
+  wrap.style.width=BW+'px';wrap.style.height=BH+'px';
+  const st=document.getElementById('status');
+  st.style.width=BW+'px';
+  document.getElementById('pb2').style.width=BW+'px';
+  document.getElementById('pr').style.width=BW+'px';
 }
 window.addEventListener('resize',()=>{sizeBoard();if(G)render();});
 
 function setD(d){aiDiff=d;document.getElementById('d-easy').classList.toggle('sel',d==='easy');document.getElementById('d-hard').classList.toggle('sel',d==='hard');}
 function show(id){['menu','game','scr-over'].forEach(s=>document.getElementById(s).classList.toggle('hide',s!==id));}
-function goMenu(){show('menu');}function closeO(){document.getElementById('scr-over').classList.add('hide');}
+function goMenu(){show('menu');}
+function closeO(){document.getElementById('scr-over').classList.add('hide');}
 
 function startG(mode,bmode){
-  gameMode=mode;boardMode=bmode;show('game');sizeBoard();initG();render();
-}
-function initG(){
-  const initBoard=(boardMode==='half'?HALF_BOARD_R:INIT_BOARD).map(r=>r.map(c=>c));
-  G={board:initBoard,turn:'r',over:false,winner:null,hist:[],sel:null,vmoves:[]};
-  sel=null;vmoves=[];
-  document.getElementById('mode-btn').textContent=boardMode==='half'?'📋 全盤':'📋 半盤';
-  document.getElementById('lbl-b2').textContent=gameMode==='ai'?'🤖 電腦AI':'🔵 黑方';
+  gameMode=mode;boardMode=bmode;
+  show('game');sizeBoard();initG();render();
 }
 function newG(){closeO();initG();render();}
-function toggleMode(){boardMode=boardMode==='full'?'half':'full';newG();}
 
-// ═══ RENDER ═══
-function render(){
-  if(!CW2)return;
-  ctx.clearRect(0,0,BW,BH);
-  drawBoardBg();
-  drawGrid();
-  drawHighlights();
-  drawPieces();
-  updateStatusUI();
+// ════════════════════════════════
+//  GAME INIT
+// ════════════════════════════════
+function initG(){
+  sel=null;vmoves=[];
+  if(boardMode==='dark') initDark();
+  else initFull();
+  const isAI=gameMode==='ai';
+  document.getElementById('lbl-b2').textContent=boardMode==='dark'?(isAI?'🤖 黑方(AI)':'🔵 黑方'):(isAI?'🤖 電腦':'🔵 黑方');
+  document.getElementById('lbl-r').textContent='🔴 紅方';
 }
 
-function rc2xy(row,col){return{x:MARG+col*CW2,y:MARG+row*CH2};}
-function xy2rc(px,py){return{r:Math.round((py-MARG)/CH2),c:Math.round((px-MARG)/CW2)};}
+function initFull(){
+  G={mode:'full',board:FULL_INIT.map(r=>r.map(c=>c)),turn:'r',over:false,winner:null,hist:[]};
+}
 
-function drawBoardBg(){
-  // Board background: light tan wood
+function initDark(){
+  // Shuffle all pieces
+  const pieces=[...DARK_ALL].sort(()=>Math.random()-.5);
+  // Place on 4×8 grid (4 rows, 8 cols = 32 cells)
+  const board=Array(4).fill(null).map((_,r)=>Array(8).fill(null).map((_,c)=>({
+    piece:pieces[r*8+c],revealed:false,
+  })));
+  G={mode:'dark',board,turn:'r',myColor:null,over:false,winner:null,hist:[],
+    // track remaining generals
+    rKalive:true,bKalive:true,
+  };
+}
+
+// ════════════════════════════════
+//  CANVAS HELPERS
+// ════════════════════════════════
+function rc2xy_full(row,col){return{x:MARG+col*CW2,y:MARG+row*CH2};}
+function xy2rc_full(px,py){return{r:Math.round((py-MARG)/CH2),c:Math.round((px-MARG)/CW2)};}
+// Dark chess: pieces in CELLS
+function rc2xy_dark(row,col){return{x:MARG+col*CW2+CW2/2,y:MARG+row*CH2+CH2/2};}
+function xy2rc_dark(px,py){return{r:Math.floor((py-MARG)/CH2),c:Math.floor((px-MARG)/CW2)};}
+
+// ════════════════════════════════
+//  RENDER
+// ════════════════════════════════
+function render(){
+  if(!BW)return;
+  ctx.clearRect(0,0,BW,BH);
+  if(boardMode==='dark')renderDark();
+  else renderFull();
+  updateUI();
+}
+
+// ─── FULL BOARD RENDER ───
+function renderFull(){
+  drawFullBg();drawFullGrid();drawFullHighlights();drawFullPieces();
+}
+function drawFullBg(){
   const bg=ctx.createLinearGradient(0,0,BW,BH);
   bg.addColorStop(0,'#f5e6c8');bg.addColorStop(.5,'#e8d4a8');bg.addColorStop(1,'#dcc898');
   ctx.fillStyle=bg;ctx.fillRect(0,0,BW,BH);
-  // Wood grain
   ctx.strokeStyle='rgba(180,140,80,.07)';ctx.lineWidth=1;
   for(let i=0;i<BH;i+=6){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(BW,i);ctx.stroke();}
 }
-
-function drawGrid(){
+function drawFullGrid(){
   ctx.strokeStyle='rgba(60,30,0,.75)';ctx.lineWidth=1.2;
-
-  // Horizontal lines (all 10 rows)
-  for(let r=0;r<10;r++){
-    const {x:x0,y}=rc2xy(r,0);const{x:x1}=rc2xy(r,8);
-    ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();
-  }
-
-  // Vertical lines (river gap between row 4 and 5)
+  for(let r=0;r<10;r++){const{x:x0,y}=rc2xy_full(r,0),{x:x1}=rc2xy_full(r,8);ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();}
   for(let c=0;c<9;c++){
-    const{x,y:y0}=rc2xy(0,c);
-    if(c===0||c===8){
-      // Full height for left and right
-      const{y:y9}=rc2xy(9,c);
-      ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y9);ctx.stroke();
-    }else{
-      // Top half
-      const{y:y4}=rc2xy(4,c);ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y4);ctx.stroke();
-      // Bottom half
-      const{y:y5}=rc2xy(5,c),{y:y9}=rc2xy(9,c);ctx.beginPath();ctx.moveTo(x,y5);ctx.lineTo(x,y9);ctx.stroke();
-    }
+    const{x,y:y0}=rc2xy_full(0,c);
+    if(c===0||c===8){const{y:y9}=rc2xy_full(9,c);ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y9);ctx.stroke();}
+    else{const{y:y4}=rc2xy_full(4,c);ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y4);ctx.stroke();const{y:y5}=rc2xy_full(5,c),{y:y9}=rc2xy_full(9,c);ctx.beginPath();ctx.moveTo(x,y5);ctx.lineTo(x,y9);ctx.stroke();}
   }
-
-  // River text: 楚河 | 漢界
-  const ry=(rc2xy(4,0).y+rc2xy(5,0).y)/2;
-  ctx.font=`bold ${Math.min(CW2*.55,CH2*.65)}px 'STSong','Songti SC','PingFang TC',serif`;
-  ctx.fillStyle='rgba(30,80,120,.7)';ctx.textBaseline='middle';ctx.textAlign='center';
-  ctx.save();ctx.translate(MARG+2*CW2,ry);ctx.rotate(-Math.PI/2);
-  ctx.fillText('楚  河',0,0);ctx.restore();
-  ctx.save();ctx.translate(MARG+6*CW2,ry);ctx.rotate(Math.PI/2);
-  ctx.fillText('漢  界',0,0);ctx.restore();
-
-  // Palace diagonals (red palace: rows 7-9, cols 3-5)
-  ctx.strokeStyle='rgba(60,30,0,.6)';ctx.lineWidth=1.2;
-  // Red palace
-  [{r1:7,c1:3,r2:9,c2:5},{r1:7,c1:5,r2:9,c2:3}].forEach(({r1,c1,r2,c2})=>{
-    const a=rc2xy(r1,c1),b=rc2xy(r2,c2);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+  // River
+  const ry=(rc2xy_full(4,0).y+rc2xy_full(5,0).y)/2;
+  ctx.font=`bold ${Math.min(CW2*.5,CH2*.6)}px 'STSong','PingFang TC',serif`;
+  ctx.fillStyle='rgba(30,80,120,.65)';ctx.textBaseline='middle';ctx.textAlign='center';
+  ctx.save();ctx.translate(MARG+2*CW2,ry);ctx.rotate(-Math.PI/2);ctx.fillText('楚  河',0,0);ctx.restore();
+  ctx.save();ctx.translate(MARG+6*CW2,ry);ctx.rotate(Math.PI/2);ctx.fillText('漢  界',0,0);ctx.restore();
+  // Palace diagonals
+  ctx.strokeStyle='rgba(60,30,0,.55)';ctx.lineWidth=1.2;
+  [{r1:7,c1:3,r2:9,c2:5},{r1:7,c1:5,r2:9,c2:3},{r1:0,c1:3,r2:2,c2:5},{r1:0,c1:5,r2:2,c2:3}].forEach(({r1,c1,r2,c2})=>{
+    const a=rc2xy_full(r1,c1),b=rc2xy_full(r2,c2);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
   });
-  // Black palace
-  [{r1:0,c1:3,r2:2,c2:5},{r1:0,c1:5,r2:2,c2:3}].forEach(({r1,c1,r2,c2})=>{
-    const a=rc2xy(r1,c1),b=rc2xy(r2,c2);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
-  });
-
-  // Soldier/cannon position markers (corner brackets)
-  const markerPos=[];
-  // Red pawns initial: (6,0),(6,2),(6,4),(6,6),(6,8)
-  [[6,0],[6,2],[6,4],[6,6],[6,8],[3,0],[3,2],[3,4],[3,6],[3,8]].forEach(([r,c])=>markerPos.push([r,c]));
-  [[7,1],[7,7],[2,1],[2,7]].forEach(([r,c])=>markerPos.push([r,c]));
-  markerPos.forEach(([r,c])=>drawMarker(rc2xy(r,c).x,rc2xy(r,c).y));
-}
-
-function drawMarker(x,y){
-  const s=Math.min(CW2,CH2)*.15,g=s*.8;
-  const dirs=[[-1,-1,1,0,-1,1,0,1],[1,-1,0,1,1,1,-1,0],[1,1,-1,0,1,-1,0,-1],[-1,1,0,-1,-1,-1,1,0]];
-  ctx.strokeStyle='rgba(60,30,0,.5)';ctx.lineWidth=1;
-  dirs.forEach(([dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4])=>{
-    ctx.beginPath();ctx.moveTo(x+dx1*g+dx2*s,y+dy1*g+dy2*s);ctx.lineTo(x+dx1*g,y+dy1*g);ctx.lineTo(x+dx1*g+dx3*s,y+dy1*g+dy4*s);ctx.stroke();
+  // Corner markers
+  [[6,0],[6,2],[6,4],[6,6],[6,8],[3,0],[3,2],[3,4],[3,6],[3,8],[7,1],[7,7],[2,1],[2,7]].forEach(([r,c])=>{
+    const{x,y}=rc2xy_full(r,c);drawCornerMark(x,y);
   });
 }
-
-function drawHighlights(){
+function drawCornerMark(x,y){
+  const s=Math.min(CW2,CH2)*.13,g=s*.75;
+  ctx.strokeStyle='rgba(60,30,0,.45)';ctx.lineWidth=1;
+  [[-1,-1,1,0,-1,1,0,1],[1,-1,0,1,1,1,-1,0],[1,1,-1,0,1,-1,0,-1],[-1,1,0,-1,-1,-1,1,0]].forEach(([a,b,c,d,e,f,g2,h])=>{
+    ctx.beginPath();ctx.moveTo(x+a*g+c*s,y+b*g+d*s);ctx.lineTo(x+a*g,y+b*g);ctx.lineTo(x+a*g+e*s,y+b*g+f*s);ctx.stroke();
+  });
+}
+function drawFullHighlights(){
   if(!sel)return;
-  const{x,y}=rc2xy(sel.r,sel.c);
+  const{x,y}=rc2xy_full(sel.r,sel.c);
   ctx.fillStyle='rgba(255,215,0,.55)';ctx.beginPath();ctx.arc(x,y,Math.min(CW2,CH2)*.42,0,Math.PI*2);ctx.fill();
   vmoves.forEach(m=>{
-    const{x:mx,y:my}=rc2xy(m.r,m.c);
-    if(G.board[m.r][m.c]){// capture
-      ctx.strokeStyle='rgba(50,200,50,.85)';ctx.lineWidth=Math.min(CW2,CH2)*.08;
-      ctx.strokeRect(mx-CW2*.4,my-CH2*.4,CW2*.8,CH2*.8);
-    }else{
-      ctx.fillStyle='rgba(50,200,50,.5)';ctx.beginPath();ctx.arc(mx,my,Math.min(CW2,CH2)*.18,0,Math.PI*2);ctx.fill();
-    }
+    const{x:mx,y:my}=rc2xy_full(m.r,m.c);
+    if(G.board[m.r][m.c]){ctx.strokeStyle='rgba(50,200,50,.85)';ctx.lineWidth=Math.min(CW2,CH2)*.08;ctx.strokeRect(mx-CW2*.38,my-CH2*.38,CW2*.76,CH2*.76);}
+    else{ctx.fillStyle='rgba(50,200,50,.5)';ctx.beginPath();ctx.arc(mx,my,Math.min(CW2,CH2)*.16,0,Math.PI*2);ctx.fill();}
   });
 }
-
-function drawPiece(piece,row,col){
-  const{x,y}=rc2xy(row,col);
-  const isR=piece[0]==='r';
-  const r=Math.min(CW2,CH2)*.42;
-  // Shadow
+function drawFullPiece(piece,row,col,checked){
+  const{x,y}=rc2xy_full(row,col);
+  const isR=piece[0]==='r',r=Math.min(CW2,CH2)*.42;
   ctx.save();ctx.shadowColor='rgba(0,0,0,.4)';ctx.shadowBlur=r*.3;ctx.shadowOffsetX=r*.06;ctx.shadowOffsetY=r*.08;
-  // Circle bg
   const bg=ctx.createRadialGradient(x-r*.2,y-r*.2,r*.05,x,y,r);
-  if(isR){bg.addColorStop(0,'#fff0e0');bg.addColorStop(.6,'#ffd0b0');bg.addColorStop(1,'#e8b090');}
+  if(isR){bg.addColorStop(0,'#fff0e0');bg.addColorStop(.6,'#ffd0b0');bg.addColorStop(1,'#e0b090');}
   else{bg.addColorStop(0,'#e0e8f5');bg.addColorStop(.6,'#b0c4e0');bg.addColorStop(1,'#8090b0');}
-  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
-  ctx.shadowBlur=0;
-  // Border ring
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
   ctx.strokeStyle=isR?'#b71c1c':'#1a237e';ctx.lineWidth=r*.1;
   ctx.beginPath();ctx.arc(x,y,r*.88,0,Math.PI*2);ctx.stroke();
   ctx.beginPath();ctx.arc(x,y,r*.72,0,Math.PI*2);ctx.stroke();
-  // Character
+  if(checked){ctx.strokeStyle='rgba(255,0,0,.85)';ctx.lineWidth=r*.18;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke();}
   ctx.fillStyle=isR?'#b71c1c':'#1a237e';
-  ctx.font=`bold ${r*1.05}px 'STSong','Songti SC','PingFang TC','Noto Serif CJK TC',serif`;
-  ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(CNAME[piece],x,y+r*.06);
-  // Check king highlight
-  if(G&&piece[1]==='K'&&isInCheck(G.board,piece[0])){
-    ctx.strokeStyle='rgba(255,0,0,.8)';ctx.lineWidth=r*.18;
-    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke();
+  ctx.font=`bold ${r*1.05}px 'STSong','Songti SC','PingFang TC',serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(CNAME[piece],x,y+r*.07);
+  ctx.restore();
+}
+function drawFullPieces(){
+  const ick=G.turn&&isInCheckFull(G.board,G.turn)?findKingFull(G.board,G.turn):null;
+  for(let r=0;r<10;r++)for(let c=0;c<9;c++){if(G.board[r][c])drawFullPiece(G.board[r][c],r,c,ick&&ick.r===r&&ick.c===c);}
+}
+
+// ─── DARK BOARD RENDER ───
+function renderDark(){
+  drawDarkBg();drawDarkGrid();drawDarkHighlights();drawDarkPieces();
+}
+function drawDarkBg(){
+  const bg=ctx.createLinearGradient(0,0,BW,BH);
+  bg.addColorStop(0,'#1a1208');bg.addColorStop(.5,'#120e04');bg.addColorStop(1,'#0e0a02');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,BW,BH);
+}
+function drawDarkGrid(){
+  // Cell borders
+  ctx.strokeStyle='rgba(212,160,48,.5)';ctx.lineWidth=1.5;
+  for(let r=0;r<=4;r++){const y=MARG+r*CH2;ctx.beginPath();ctx.moveTo(MARG,y);ctx.lineTo(MARG+8*CW2,y);ctx.stroke();}
+  for(let c=0;c<=8;c++){const x=MARG+c*CW2;ctx.beginPath();ctx.moveTo(x,MARG);ctx.lineTo(x,MARG+4*CH2);ctx.stroke();}
+  // Border glow
+  ctx.strokeStyle='rgba(212,160,48,.7)';ctx.lineWidth=2.5;
+  ctx.strokeRect(MARG,MARG,8*CW2,4*CH2);
+}
+function drawDarkHighlights(){
+  if(!sel)return;
+  const{x,y}=rc2xy_dark(sel.r,sel.c);const r=Math.min(CW2,CH2)*.44;
+  ctx.fillStyle='rgba(255,215,0,.35)';ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  vmoves.forEach(m=>{
+    const{x:mx,y:my}=rc2xy_dark(m.r,m.c);
+    const cell=G.board[m.r][m.c];
+    if(cell&&cell.revealed){ctx.strokeStyle='rgba(50,220,50,.85)';ctx.lineWidth=3;ctx.strokeRect(MARG+m.c*CW2+3,MARG+m.r*CH2+3,CW2-6,CH2-6);}
+    else{ctx.fillStyle='rgba(50,220,50,.4)';ctx.beginPath();ctx.arc(mx,my,Math.min(CW2,CH2)*.18,0,Math.PI*2);ctx.fill();}
+  });
+}
+function drawDarkPiece(cell,row,col){
+  const{x,y}=rc2xy_dark(row,col);
+  const r=Math.min(CW2,CH2)*.42;
+  ctx.save();ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=r*.35;ctx.shadowOffsetX=r*.05;ctx.shadowOffsetY=r*.08;
+  if(!cell.revealed){
+    // Face-down piece
+    const bg=ctx.createRadialGradient(x-r*.2,y-r*.2,r*.05,x,y,r);
+    bg.addColorStop(0,'#5d4037');bg.addColorStop(.6,'#4e342e');bg.addColorStop(1,'#3e2723');
+    ctx.fillStyle=bg;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    ctx.strokeStyle='#a1887f';ctx.lineWidth=r*.1;ctx.beginPath();ctx.arc(x,y,r*.88,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.arc(x,y,r*.72,0,Math.PI*2);ctx.stroke();
+    // Pattern on back
+    ctx.fillStyle='rgba(255,200,100,.25)';
+    ctx.font=`bold ${r*.9}px 'STSong','PingFang TC',serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('棋',x,y+r*.07);
+  }else{
+    const isR=cell.piece[0]==='r';
+    const bg=ctx.createRadialGradient(x-r*.2,y-r*.2,r*.05,x,y,r);
+    if(isR){bg.addColorStop(0,'#fff3e8');bg.addColorStop(.6,'#ffd0a0');bg.addColorStop(1,'#e0a070');}
+    else{bg.addColorStop(0,'#e8eef8');bg.addColorStop(.6,'#a8c0e0');bg.addColorStop(1,'#7090b8');}
+    ctx.fillStyle=bg;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    ctx.strokeStyle=isR?'#c62828':'#1a237e';ctx.lineWidth=r*.1;
+    ctx.beginPath();ctx.arc(x,y,r*.88,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.arc(x,y,r*.72,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle=isR?'#c62828':'#1a237e';
+    ctx.font=`bold ${r*1.05}px 'STSong','Songti SC','PingFang TC',serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(CNAME[cell.piece],x,y+r*.07);
   }
   ctx.restore();
 }
-
-function drawPieces(){
-  for(let r=0;r<10;r++)for(let c=0;c<9;c++){if(G.board[r][c])drawPiece(G.board[r][c],r,c);}
+function drawDarkPieces(){
+  for(let r=0;r<4;r++)for(let c=0;c<8;c++){if(G.board[r][c])drawDarkPiece(G.board[r][c],r,c);}
 }
 
-function updateStatusUI(){
-  const st=document.getElementById('status');
-  const ic=isInCheck(G.board,G.turn);
-  const nm=G.turn==='r'?'🔴 紅方':'🔵 '+(gameMode==='ai'?'電腦AI':'黑方');
-  if(G.over){st.textContent=`${G.winner==='r'?'🔴':'🔵'} ${G.winner==='r'?'紅方':'黑方'} 勝利！`;st.style.color='#ffd600';}
-  else if(ic){st.textContent=`⚠️ ${nm} — 將軍！`;st.style.color='#ff6b6b';}
-  else{st.textContent=`${nm} 的回合`;st.style.color='#f5dca0';}
-  document.getElementById('pr').classList.toggle('active',G.turn==='r'&&!G.over);
-  document.getElementById('pb2').classList.toggle('active',G.turn==='b'&&!G.over);
-  document.getElementById('trn-r').textContent=G.turn==='r'&&!G.over?'▶ 你的回合':'';
-  document.getElementById('trn-b2').textContent=G.turn==='b'&&!G.over?(gameMode==='ai'?'🤖':'▶ 你的回合'):'';
-}
-
-// ═══ INPUT ═══
+// ════════════════════════════════
+//  INPUT
+// ════════════════════════════════
 canvas.addEventListener('touchend',e=>{e.preventDefault();const br=canvas.getBoundingClientRect();const t=e.changedTouches[0];handleClick((t.clientX-br.left)*BW/br.width,(t.clientY-br.top)*BH/br.height);},{passive:false});
 canvas.addEventListener('mousedown',e=>{const br=canvas.getBoundingClientRect();handleClick((e.clientX-br.left)*BW/br.width,(e.clientY-br.top)*BH/br.height);});
 
 function handleClick(px,py){
   if(!G||G.over)return;
   if(gameMode==='ai'&&G.turn==='b')return;
-  const{r,c}=xy2rc(px,py);
+  if(boardMode==='dark')handleDarkClick(px,py);
+  else handleFullClick(px,py);
+}
+
+// ─── FULL CLICK ───
+function handleFullClick(px,py){
+  const{r,c}=xy2rc_full(px,py);
   if(r<0||r>9||c<0||c>8)return;
   if(sel){
     const mv=vmoves.find(m=>m.r===r&&m.c===c);
-    if(mv){doMove(sel.r,sel.c,r,c);return;}
-    if(G.board[r][c]&&G.board[r][c][0]===G.turn){sel={r,c};vmoves=getLegal(G.board,r,c,G.turn);render();return;}
+    if(mv){doFullMove(sel.r,sel.c,r,c);return;}
+    if(G.board[r][c]&&G.board[r][c][0]===G.turn){sel={r,c};vmoves=getFullLegal(G.board,r,c,G.turn);render();return;}
     sel=null;vmoves=[];render();return;
   }
-  if(G.board[r][c]&&G.board[r][c][0]===G.turn){sel={r,c};vmoves=getLegal(G.board,r,c,G.turn);render();}
+  if(G.board[r][c]&&G.board[r][c][0]===G.turn){sel={r,c};vmoves=getFullLegal(G.board,r,c,G.turn);render();}
 }
 
-function doMove(fr,fc,tr,tc){
-  G.hist.push({board:G.board.map(r=>[...r]),turn:G.turn,sel:sel?{...sel}:null});
-  G.board[tr][tc]=G.board[fr][fc];G.board[fr][fc]=null;sel=null;vmoves=[];
-  G.turn=G.turn==='r'?'b':'r';
-  // Check win: has opponent's king been captured? Or no legal moves?
-  if(!hasAnyLegal(G.board,G.turn)){
-    G.over=true;G.winner=G.turn==='r'?'b':'r';
+// ─── DARK CLICK ───
+function handleDarkClick(px,py){
+  const{r,c}=xy2rc_dark(px,py);
+  if(r<0||r>=4||c<0||c>=8)return;
+  const cell=G.board[r][c];
+  if(!cell)return;
+
+  if(sel){
+    const mv=vmoves.find(m=>m.r===r&&m.c===c);
+    if(mv){doDarkMove(sel.r,sel.c,r,c);return;}
+    // Click another own revealed piece
+    if(cell.revealed&&cell.piece[0]===G.myColor){sel={r,c};vmoves=getDarkMoves(r,c);render();return;}
+    // Click unrevealed (deselect)
+    sel=null;vmoves=[];render();return;
+  }
+
+  if(!cell.revealed){
+    // Flip it
+    flipDark(r,c);return;
+  }
+  // Select own revealed piece
+  if(G.myColor&&cell.piece[0]===G.myColor){sel={r,c};vmoves=getDarkMoves(r,c);render();}
+}
+
+function flipDark(r,c){
+  G.hist.push(saveDarkState());
+  G.board[r][c].revealed=true;
+  const p=G.board[r][c].piece;
+  // First flip determines colors
+  if(!G.myColor){
+    G.myColor=p[0]; // current player (r) gets this color
+    const oppColor=p[0]==='r'?'b':'r';
+    if(gameMode==='ai') document.getElementById('lbl-b2').textContent=`🤖 ${oppColor==='b'?'黑':'紅'}方(AI)`;
+  }
+  // Check if we captured a general (through flip — not normal but handle)
+  sel=null;vmoves=[];
+  nextTurnDark();
+}
+
+function doDarkMove(fr,fc,tr,tc){
+  G.hist.push(saveDarkState());
+  const target=G.board[tr][tc];
+  // Capture check
+  if(target&&target.revealed&&target.piece==='bK'){G.bKalive=false;}
+  if(target&&target.revealed&&target.piece==='rK'){G.rKalive=false;}
+  G.board[tr][tc]=G.board[fr][fc];
+  G.board[fr][fc]=null;
+  sel=null;vmoves=[];
+  // Check win
+  if(!G.bKalive||!G.rKalive){
+    G.over=true;G.winner=G.myColor;// whoever captures general wins
     render();setTimeout(showOver,400);return;
   }
+  // Check if opponent has any moves left
+  nextTurnDark();
+}
+
+function nextTurnDark(){
+  G.turn=G.turn==='r'?'b':'r';
   render();
-  if(gameMode==='ai'&&G.turn==='b'&&!G.over)setTimeout(doAI,300);
+  if(G.over)return;
+  if(gameMode==='ai'&&G.turn!==G.myColor)setTimeout(doDarkAI,300);
 }
 
-function undo(){
-  if(!G||!G.hist.length)return;
-  if(gameMode==='ai'&&G.hist.length>=2&&G.turn==='r')G.hist.pop();
-  const s=G.hist.pop();G.board=s.board;G.turn=s.turn;sel=null;vmoves=[];G.over=false;G.winner=null;render();
+function saveDarkState(){
+  return{
+    board:G.board.map(r=>r.map(c=>c?{...c}:null)),
+    turn:G.turn,myColor:G.myColor,
+    rKalive:G.rKalive,bKalive:G.bKalive,
+  };
 }
 
-function showOver(){
-  document.getElementById('oe').textContent=G.winner==='r'?'🔴':'🔵';
-  document.getElementById('ot').textContent=`${G.winner==='r'?'紅方':'黑方'} 獲勝！`;
-  document.getElementById('os').textContent=G.winner==='r'?'黑方無法行棋，紅方勝！':'紅方無法行棋，黑方勝！';
-  document.getElementById('scr-over').classList.remove('hide');
+// ─── DARK MOVE GENERATION ───
+function getDarkMoves(r,c){
+  const cell=G.board[r][c];if(!cell||!cell.revealed)return[];
+  const col=cell.piece[0],type=cell.piece[1],mv=[];
+  const ok=(r,c)=>r>=0&&r<4&&c>=0&&c<8;
+  const canCapture=(tr,tc)=>{
+    const t=G.board[tr][tc];if(!t||!t.revealed)return false;
+    if(t.piece[0]===col)return false;// can't capture own
+    return darkCanBeat(cell.piece,t.piece);
+  };
+  const isEmpty=(r,c)=>ok(r,c)&&!G.board[r][c];
+  const dirs=[[0,1],[0,-1],[1,0],[-1,0]];
+
+  if(type==='R'){// 車: slide orthogonally
+    dirs.forEach(([dr,dc])=>{let nr=r+dr,nc=c+dc;
+      while(ok(nr,nc)){
+        const t=G.board[nr][nc];
+        if(!t){mv.push({r:nr,c:nc});}
+        else{if(t.revealed&&t.piece[0]!==col&&darkCanBeat(cell.piece,t.piece))mv.push({r:nr,c:nc});break;}
+        nr+=dr;nc+=dc;
+      }
+    });
+  }else if(type==='C'){// 炮: move like rook (no capture), capture by jump
+    dirs.forEach(([dr,dc])=>{let nr=r+dr,nc=c+dc,screen=false;
+      while(ok(nr,nc)){
+        const t=G.board[nr][nc];
+        if(!screen){if(!t)mv.push({r:nr,c:nc});else screen=true;}
+        else{if(t){if(t.revealed&&t.piece[0]!==col)mv.push({r:nr,c:nc});break;}}
+        nr+=dr;nc+=dc;
+      }
+    });
+  }else if(type==='H'){// 馬: L-shape
+    [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]].forEach(([dr,dc])=>{
+      const nr=r+dr,nc=c+dc;if(!ok(nr,nc))return;
+      const br=r+(Math.abs(dr)===2?dr/2:0),bc=c+(Math.abs(dc)===2?dc/2:0);
+      if(G.board[br][bc])return;// blocked
+      const t=G.board[nr][nc];
+      if(!t)mv.push({r:nr,c:nc});
+      else if(t.revealed&&t.piece[0]!==col&&darkCanBeat(cell.piece,t.piece))mv.push({r:nr,c:nc});
+    });
+  }else{// 帥/將/仕/士/相/象/兵/卒: move 1 step orthogonally
+    dirs.forEach(([dr,dc])=>{const nr=r+dr,nc=c+dc;if(!ok(nr,nc))return;
+      const t=G.board[nr][nc];
+      if(!t)mv.push({r:nr,c:nc});
+      else if(t.revealed&&t.piece[0]!==col&&darkCanBeat(cell.piece,t.piece))mv.push({r:nr,c:nc});
+    });
+  }
+  return mv;
 }
 
-// ═══ MOVE GENERATION ═══
-function ok(r,c){return r>=0&&r<10&&c>=0&&c<9;}
+function darkCanBeat(attacker,target){
+  // 炮 capture handled separately in getDarkMoves
+  const ar=RANK[attacker],tr=RANK[target];
+  // 兵/卒 can capture 帥/將
+  if(ar===2&&tr===8)return true;
+  // 帥/將 cannot capture 兵/卒
+  if(ar===8&&tr===2)return false;
+  return ar>=tr;
+}
+
+// ─── DARK AI ───
+function doDarkAI(){
+  document.getElementById('ai-ind').style.display='block';
+  setTimeout(()=>{
+    document.getElementById('ai-ind').style.display='none';
+    if(G.over)return;
+    const aiColor=G.myColor==='r'?'b':'r';
+    // Find all moves for AI
+    const moves=[];
+    for(let r=0;r<4;r++)for(let c=0;c<8;c++){
+      const cell=G.board[r][c];
+      if(!cell)continue;
+      if(!cell.revealed){moves.push({type:'flip',r,c,score:0});}
+      else if(cell.piece[0]===aiColor){
+        getDarkMoves(r,c).forEach(m=>{
+          let sc=0;const t=G.board[m.r][m.c];
+          if(t&&t.revealed)sc=(RANK[t.piece]||0)*100;
+          moves.push({type:'move',fr:r,fc:c,...m,score:sc});
+        });
+      }
+    }
+    if(!moves.length){G.over=true;G.winner=G.myColor;showOver();return;}
+    // Pick best: capture > flip
+    moves.sort((a,b)=>b.score-a.score);
+    // Among top moves with same score, randomize
+    const top=moves[0].score;const topM=moves.filter(m=>m.score===top);
+    const chosen=topM[Math.floor(Math.random()*topM.length)];
+    if(chosen.type==='flip')flipDark(chosen.r,chosen.c);
+    else doDarkMove(chosen.fr,chosen.fc,chosen.r,chosen.c);
+  },aiDiff==='hard'?450:200);
+}
+
+// ════════════════════════════════
+//  FULL XIANGQI ENGINE
+// ════════════════════════════════
+function ok_f(r,c){return r>=0&&r<10&&c>=0&&c<9;}
 function opp(col){return col==='r'?'b':'r';}
 function redPalace(r,c){return r>=7&&r<=9&&c>=3&&c<=5;}
 function blkPalace(r,c){return r>=0&&r<=2&&c>=3&&c<=5;}
 function crossedRiver(piece,r){return piece[0]==='r'?r<5:r>4;}
 
-function pseudoMoves(board,r,c){
+function pseudoFull(board,r,c){
   const piece=board[r][c];if(!piece)return[];
   const col=piece[0],type=piece[1],mv=[];
-  const push=(tr,tc)=>{if(ok(tr,tc)&&board[tr][tc]?.[0]!==col)mv.push({r:tr,c:tc});};
-  const slide=(dr,dc)=>{let tr=r+dr,tc=c+dc;while(ok(tr,tc)){if(board[tr][tc]){if(board[tr][tc][0]!==col)mv.push({r:tr,c:tc});break;}mv.push({r:tr,c:tc});tr+=dr;tc+=dc;}};
-
+  const push=(tr,tc)=>{if(ok_f(tr,tc)&&board[tr][tc]?.[0]!==col)mv.push({r:tr,c:tc});};
+  const slide=(dr,dc)=>{let tr=r+dr,tc=c+dc;while(ok_f(tr,tc)){if(board[tr][tc]){if(board[tr][tc][0]!==col)mv.push({r:tr,c:tc});break;}mv.push({r:tr,c:tc});tr+=dr;tc+=dc;}};
   if(type==='R'){[[0,1],[0,-1],[1,0],[-1,0]].forEach(([dr,dc])=>slide(dr,dc));}
-  else if(type==='H'){
-    // Horse: L-move with blocking
-    [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]].forEach(([dr,dc])=>{
-      const br=r+(Math.abs(dr)===2?dr/2:0),bc=c+(Math.abs(dc)===2?dc/2:0);
-      if(ok(r+dr,c+dc)&&!board[br][bc]&&board[r+dr][c+dc]?.[0]!==col)mv.push({r:r+dr,c:c+dc});
-    });
-  }
-  else if(type==='E'){
-    // Elephant: 2 diagonal, no river crossing, blocked if midpoint occupied
-    [[2,2],[2,-2],[-2,2],[-2,-2]].forEach(([dr,dc])=>{
-      const mr=r+dr/2,mc=c+dc/2;
-      if(!ok(r+dr,c+dc))return;
-      if(col==='r'&&r+dr<5)return;// can't cross river
-      if(col==='b'&&r+dr>4)return;
-      if(!board[mr][mc])push(r+dr,c+dc);
-    });
-  }
-  else if(type==='A'){
-    [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([dr,dc])=>{
-      const tr=r+dr,tc=c+dc;
-      if((col==='r'&&redPalace(tr,tc))||(col==='b'&&blkPalace(tr,tc)))push(tr,tc);
-    });
-  }
-  else if(type==='K'){
-    [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr,dc])=>{
-      const tr=r+dr,tc=c+dc;
-      if((col==='r'&&redPalace(tr,tc))||(col==='b'&&blkPalace(tr,tc)))push(tr,tc);
-    });
-  }
-  else if(type==='C'){
-    [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dr,dc])=>{
-      let tr=r+dr,tc=c+dc,screen=false;
-      while(ok(tr,tc)){
-        if(!screen){if(!board[tr][tc])mv.push({r:tr,c:tc});else screen=true;}
-        else{if(board[tr][tc]){if(board[tr][tc][0]!==col)mv.push({r:tr,c:tc});break;}}
-        tr+=dr;tc+=dc;
-      }
-    });
-  }
-  else if(type==='P'){
-    const fwd=col==='r'?-1:1;
-    push(r+fwd,c);// forward
-    if(crossedRiver(piece,r)){push(r,c+1);push(r,c-1);}// sideways after crossing
-  }
+  else if(type==='H'){[[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]].forEach(([dr,dc])=>{const br=r+(Math.abs(dr)===2?dr/2:0),bc=c+(Math.abs(dc)===2?dc/2:0);if(ok_f(r+dr,c+dc)&&!board[br][bc]&&board[r+dr][c+dc]?.[0]!==col)mv.push({r:r+dr,c:c+dc});});}
+  else if(type==='E'){[[2,2],[2,-2],[-2,2],[-2,-2]].forEach(([dr,dc])=>{const mr=r+dr/2,mc=c+dc/2;if(!ok_f(r+dr,c+dc))return;if(col==='r'&&r+dr<5)return;if(col==='b'&&r+dr>4)return;if(!board[mr][mc])push(r+dr,c+dc);});}
+  else if(type==='A'){[[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([dr,dc])=>{const tr=r+dr,tc=c+dc;if((col==='r'&&redPalace(tr,tc))||(col==='b'&&blkPalace(tr,tc)))push(tr,tc);});}
+  else if(type==='K'){[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr,dc])=>{const tr=r+dr,tc=c+dc;if((col==='r'&&redPalace(tr,tc))||(col==='b'&&blkPalace(tr,tc)))push(tr,tc);});}
+  else if(type==='C'){[[0,1],[0,-1],[1,0],[-1,0]].forEach(([dr,dc])=>{let tr=r+dr,tc=c+dc,screen=false;while(ok_f(tr,tc)){if(!screen){if(!board[tr][tc])mv.push({r:tr,c:tc});else screen=true;}else{if(board[tr][tc]){if(board[tr][tc][0]!==col)mv.push({r:tr,c:tc});break;}}tr+=dr;tc+=dc;}});}
+  else if(type==='P'){const fwd=col==='r'?-1:1;push(r+fwd,c);if(crossedRiver(piece,r)){push(r,c+1);push(r,c-1);}}
   return mv;
 }
-
-// Flying general check: generals face each other with no pieces between
-function flyingGeneral(board){
-  let rk=null,bk=null;
-  for(let r=0;r<10;r++)for(let c=0;c<9;c++){
-    if(board[r][c]==='rK')rk={r,c};if(board[r][c]==='bK')bk={r,c};
-  }
+function flyingGen(board){
+  let rk=null,bk=null;for(let r=0;r<10;r++)for(let c=0;c<9;c++){if(board[r][c]==='rK')rk={r,c};if(board[r][c]==='bK')bk={r,c};}
   if(!rk||!bk||rk.c!==bk.c)return false;
   for(let r=Math.min(rk.r,bk.r)+1;r<Math.max(rk.r,bk.r);r++)if(board[r][rk.c])return false;
   return true;
 }
-
-function isInCheck(board,col){
-  let kpos=null;
-  for(let r=0;r<10;r++)for(let c=0;c<9;c++)if(board[r][c]===col+'K'){kpos={r,c};break;}
-  if(!kpos)return true;
-  // Check if any opponent piece can attack king
+function findKingFull(board,col){for(let r=0;r<10;r++)for(let c=0;c<9;c++)if(board[r][c]===col+'K')return{r,c};return null;}
+function isInCheckFull(board,col){
+  const k=findKingFull(board,col);if(!k)return true;
   const op=opp(col);
-  for(let r=0;r<10;r++)for(let c=0;c<9;c++){
-    if(board[r][c]&&board[r][c][0]===op){
-      if(pseudoMoves(board,r,c).some(m=>m.r===kpos.r&&m.c===kpos.c))return true;
-    }
-  }
-  return flyingGeneral(board);
+  for(let r=0;r<10;r++)for(let c=0;c<9;c++)if(board[r][c]&&board[r][c][0]===op&&pseudoFull(board,r,c).some(m=>m.r===k.r&&m.c===k.c))return true;
+  return flyingGen(board);
+}
+function getFullLegal(board,r,c,col){
+  return pseudoFull(board,r,c).filter(m=>{const nb=board.map(r=>[...r]);nb[m.r][m.c]=nb[r][c];nb[r][c]=null;return!isInCheckFull(nb,col)&&!flyingGen(nb);});
+}
+function hasFullLegal(board,col){for(let r=0;r<10;r++)for(let c=0;c<9;c++)if(board[r][c]&&board[r][c][0]===col&&getFullLegal(board,r,c,col).length>0)return true;return false;}
+
+function doFullMove(fr,fc,tr,tc){
+  G.hist.push({board:G.board.map(r=>[...r]),turn:G.turn});
+  G.board[tr][tc]=G.board[fr][fc];G.board[fr][fc]=null;sel=null;vmoves=[];
+  G.turn=G.turn==='r'?'b':'r';
+  if(!hasFullLegal(G.board,G.turn)){G.over=true;G.winner=G.turn==='r'?'b':'r';render();setTimeout(showOver,400);return;}
+  render();
+  if(gameMode==='ai'&&G.turn==='b'&&!G.over)setTimeout(doFullAI,350);
 }
 
-function getLegal(board,r,c,col){
-  return pseudoMoves(board,r,c).filter(m=>{
-    const nb=board.map(row=>[...row]);nb[m.r][m.c]=nb[r][c];nb[r][c]=null;
-    return!isInCheck(nb,col)&&!flyingGeneral(nb);
-  });
+// Full AI
+const PVAL={K:9999,R:900,C:450,H:400,E:200,A:200,P:100};
+function evalFull(board){let s=0;for(let r=0;r<10;r++)for(let c=0;c<9;c++){const p=board[r][c];if(!p)continue;const v=PVAL[p[1]]||0;s+=p[0]==='b'?-v:v;}return s;}
+function allMovesFull(board,col){const mv=[];for(let r=0;r<10;r++)for(let c=0;c<9;c++)if(board[r][c]&&board[r][c][0]===col)getFullLegal(board,r,c,col).forEach(m=>mv.push({fr:r,fc:c,...m}));return mv;}
+function mmFull(board,depth,a,b,max){
+  if(depth===0)return evalFull(board);
+  const col=max?'r':'b',moves=allMovesFull(board,col);
+  if(!moves.length)return max?-9999:9999;
+  moves.sort((x,y)=>(board[y.r][y.c]?1:0)-(board[x.r][x.c]?1:0));
+  if(max){let v=-Infinity;for(const m of moves){const nb=board.map(r=>[...r]);nb[m.r][m.c]=nb[m.fr][m.fc];nb[m.fr][m.fc]=null;v=Math.max(v,mmFull(nb,depth-1,a,b,false));a=Math.max(a,v);if(b<=a)break;}return v;}
+  else{let v=Infinity;for(const m of moves){const nb=board.map(r=>[...r]);nb[m.r][m.c]=nb[m.fr][m.fc];nb[m.fr][m.fc]=null;v=Math.min(v,mmFull(nb,depth-1,a,b,true));b=Math.min(b,v);if(b<=a)break;}return v;}
 }
-
-function hasAnyLegal(board,col){
-  for(let r=0;r<10;r++)for(let c=0;c<9;c++)if(board[r][c]&&board[r][c][0]===col&&getLegal(board,r,c,col).length>0)return true;
-  return false;
-}
-
-// ═══ AI ═══
-const PVAL={K:10000,R:900,C:450,H:400,E:200,A:200,P:100};
-function evalBoard(board){
-  let s=0;
-  for(let r=0;r<10;r++)for(let c=0;c<9;c++){
-    const p=board[r][c];if(!p)continue;
-    const v=PVAL[p[1]]||0;s+=p[0]==='b'?-v:v;
-  }
-  return s;
-}
-function getAllMoves(board,col){
-  const mv=[];
-  for(let r=0;r<10;r++)for(let c=0;c<9;c++)if(board[r][c]&&board[r][c][0]===col)getLegal(board,r,c,col).forEach(m=>mv.push({fr:r,fc:c,...m}));
-  return mv;
-}
-function minimax(board,depth,alpha,beta,maxing){
-  if(depth===0)return evalBoard(board);
-  const col=maxing?'r':'b',moves=getAllMoves(board,col);
-  if(!moves.length)return maxing?-9999:9999;
-  moves.sort((a,b2)=>(board[b2.r][b2.c]?1:0)-(board[a.r][a.c]?1:0));
-  if(maxing){let v=-Infinity;for(const m of moves){const nb=board.map(r=>[...r]);nb[m.r][m.c]=nb[m.fr][m.fc];nb[m.fr][m.fc]=null;v=Math.max(v,minimax(nb,depth-1,alpha,beta,false));alpha=Math.max(alpha,v);if(beta<=alpha)break;}return v;}
-  else{let v=Infinity;for(const m of moves){const nb=board.map(r=>[...r]);nb[m.r][m.c]=nb[m.fr][m.fc];nb[m.fr][m.fc]=null;v=Math.min(v,minimax(nb,depth-1,alpha,beta,true));beta=Math.min(beta,v);if(beta<=alpha)break;}return v;}
-}
-function getBestMove(board,col){
-  const moves=getAllMoves(board,col);if(!moves.length)return null;
-  if(aiDiff==='easy'&&Math.random()<.3)return moves[Math.floor(Math.random()*moves.length)];
-  const depth=aiDiff==='easy'?2:3;let best=null,bestV=Infinity;
-  for(const m of moves){
-    const nb=board.map(r=>[...r]);nb[m.r][m.c]=nb[m.fr][m.fc];nb[m.fr][m.fc]=null;
-    const v=minimax(nb,depth-1,-Infinity,Infinity,true);
-    if(v<bestV){bestV=v;best=m;}
-  }
-  return best||moves[0];
-}
-function doAI(){
+function doFullAI(){
   document.getElementById('ai-ind').style.display='block';
   setTimeout(()=>{
-    const m=getBestMove(G.board,'b');
+    const moves=allMovesFull(G.board,'b');
     document.getElementById('ai-ind').style.display='none';
-    if(m)doMove(m.fr,m.fc,m.r,m.c);
+    if(!moves.length){G.over=true;G.winner='r';render();showOver();return;}
+    if(aiDiff==='easy'&&Math.random()<.3){const m=moves[Math.floor(Math.random()*moves.length)];doFullMove(m.fr,m.fc,m.r,m.c);return;}
+    const depth=aiDiff==='easy'?2:3;let best=null,bestV=Infinity;
+    for(const m of moves){const nb=G.board.map(r=>[...r]);nb[m.r][m.c]=nb[m.fr][m.fc];nb[m.fr][m.fc]=null;const v=mmFull(nb,depth-1,-Infinity,Infinity,true);if(v<bestV){bestV=v;best=m;}}
+    if(best)doFullMove(best.fr,best.fc,best.r,best.c);
   },aiDiff==='hard'?500:200);
+}
+
+function undo(){
+  if(!G||!G.hist.length)return;
+  if(boardMode==='dark'){
+    if(gameMode==='ai'&&G.hist.length>=2&&G.turn===G.myColor){G.hist.pop();}
+    const s=G.hist.pop();G.board=s.board;G.turn=s.turn;G.myColor=s.myColor;G.rKalive=s.rKalive;G.bKalive=s.bKalive;
+  }else{
+    if(gameMode==='ai'&&G.hist.length>=2&&G.turn==='r')G.hist.pop();
+    const s=G.hist.pop();G.board=s.board;G.turn=s.turn;
+  }
+  G.over=false;G.winner=null;sel=null;vmoves=[];render();
+}
+
+// ════════════════════════════════
+//  UI
+// ════════════════════════════════
+function updateUI(){
+  const st=document.getElementById('status');
+  if(boardMode==='dark'){
+    if(!G.myColor){st.textContent='🃏 點任意棋子翻牌！';st.style.color='#ffd600';}
+    else if(G.over){st.textContent=G.winner?`${G.winner==='r'?'🔴 紅方':'🔵 黑方'} 獲勝！`:'平局';st.style.color='#ffd600';}
+    else{const myTurn=G.turn===G.myColor;st.textContent=myTurn?`🃏 你的回合 (${G.myColor==='r'?'🔴':'🔵'})`:('🤖 AI 思考中…');st.style.color='#f5dca0';}
+    const myTurn=!G.myColor||G.turn===G.myColor;
+    document.getElementById('pr').classList.toggle('active',G.myColor==='r'&&myTurn&&!G.over);
+    document.getElementById('pb2').classList.toggle('active',G.myColor==='b'&&myTurn&&!G.over);
+    document.getElementById('trn-r').textContent=G.myColor==='r'&&G.turn===G.myColor?'▶ 你的回合':'';
+    document.getElementById('trn-b2').textContent=G.myColor==='b'&&G.turn===G.myColor?'▶ 你的回合':'';
+  }else{
+    const ic=isInCheckFull(G.board,G.turn);
+    const nm=G.turn==='r'?'🔴 紅方':'🔵 '+(gameMode==='ai'?'電腦':'黑方');
+    if(G.over){st.textContent=`${G.winner==='r'?'🔴 紅方':'🔵 黑方'} 獲勝！`;st.style.color='#ffd600';}
+    else if(ic){st.textContent=`⚠️ ${nm} — 將軍！`;st.style.color='#ff6b6b';}
+    else{st.textContent=`${nm} 的回合`;st.style.color='#f5dca0';}
+    document.getElementById('pr').classList.toggle('active',G.turn==='r'&&!G.over);
+    document.getElementById('pb2').classList.toggle('active',G.turn==='b'&&!G.over);
+    document.getElementById('trn-r').textContent=G.turn==='r'&&!G.over?'▶ 你的回合':'';
+    document.getElementById('trn-b2').textContent=G.turn==='b'&&!G.over?(gameMode==='ai'?'🤖':'▶ 你的回合'):'';
+  }
+}
+
+function showOver(){
+  if(!G.winner&&!G.over)return;
+  document.getElementById('oe').textContent=G.winner==='r'?'🔴':'🔵';
+  const wn=G.winner==='r'?'紅方':'黑方';
+  document.getElementById('ot').textContent=`${wn} 獲勝！`;
+  document.getElementById('os').textContent=boardMode==='dark'?'暗棋對局結束':'象棋對局結束';
+  document.getElementById('scr-over').classList.remove('hide');
 }
 
 show('menu');
