@@ -219,7 +219,7 @@ function drawWinLine(){
 function updateStatusUI(){
   const st=document.getElementById('status');
   if(G.over){
-    const w=G.winner;st.textContent=w?`${w==='b'?'⚫':'⚪'} ${w==='b'?(gameMode==='ai'?'玩家':'黑方'):'白方'} 勝利！`:'🤝 平局！';
+    const w=G.winner;const wn=w==='b'?(gameMode==='ai'?'玩家':'黑方'):(gameMode==='ai'?'電腦AI':'白方');st.textContent=w?`${w==='b'?'⚫':'⚪'} ${wn} 勝利！`:'🤝 平局！';
     st.style.background=w?'rgba(80,40,0,.9)':'rgba(40,40,40,.9)';st.style.color='#ffd600';
   }else{
     const t=G.turn;const nm=t==='b'?(gameMode==='ai'?'⚫ 玩家':'⚫ 黑方'):'⚪ '+(gameMode==='ai'?'電腦AI':'白方');
@@ -263,6 +263,7 @@ function place(r,c){
 
 function undo(){
   if(!G||!G.hist.length)return;
+  closeO();
   if(gameMode==='ai'&&G.hist.length>=2&&G.turn==='b'){G.hist.pop();}
   const s=G.hist.pop();
   G.board=s.board;G.turn=s.turn;G.over=false;G.winner=null;G.winLine=null;G.moveCnt=G.hist.length;
