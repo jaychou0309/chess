@@ -396,23 +396,26 @@ function handleFullClick(px,py){
 function handleDarkClick(px,py){
   const{r,c}=xy2rc_dark(px,py);
   if(r<0||r>=4||c<0||c>=8)return;
-  const cell=G.board[r][c];
-  if(!cell)return;
 
+  // ── If a piece is selected, check valid move FIRST (target may be empty cell) ──
   if(sel){
     const mv=vmoves.find(m=>m.r===r&&m.c===c);
     if(mv){doDarkMove(sel.r,sel.c,r,c);return;}
-    // Click another own revealed piece
-    if(cell.revealed&&cell.piece[0]===G.myColor){sel={r,c};vmoves=getDarkMoves(r,c);render();return;}
-    // Click unrevealed (deselect)
+    // Tap another own revealed piece → reselect
+    const cell2=G.board[r][c];
+    if(cell2&&cell2.revealed&&G.myColor&&cell2.piece[0]===G.myColor){
+      sel={r,c};vmoves=getDarkMoves(r,c);render();return;
+    }
+    // Tap empty or enemy or unrevealed → deselect
     sel=null;vmoves=[];render();return;
   }
 
+  // ── No selection ──
+  const cell=G.board[r][c];
+  if(!cell)return; // truly empty cell with no piece
   if(!cell.revealed){
-    // Flip it
     flipDark(r,c);return;
   }
-  // Select own revealed piece
   if(G.myColor&&cell.piece[0]===G.myColor){sel={r,c};vmoves=getDarkMoves(r,c);render();}
 }
 
